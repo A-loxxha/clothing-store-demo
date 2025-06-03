@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mabel Statement | Browse</title>
+  <link rel="stylesheet" href="Styles.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" />
+  <style>
+    .cart-badge {
+      background: red;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+    }
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+    }
+    .toast {
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      animation: fadeout 4s forwards;
+    }
+    @keyframes fadeout {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+
+    .card span[style*="-"]:not([style*="line-through"]) {
+      box-shadow: 0 2px 6px rgba(0,0,0,.25);
+
+
+    }
+    .discount-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #e53935;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      z-index: 10; /* make sure it stays above the images */
+}
+
+    .card img {
+  width: 100%;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.card .img-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 200%; /* adjust for aspect ratio */
+  overflow: hidden;
+}
+
+.card .img-wrapper img.hover {
+  opacity: 0;
+}
+
+.card .img-wrapper:hover img.hover {
+  opacity: 1;
+}
+
+.card .img-wrapper:hover img.main {
+  opacity: 0;
+}
+
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="#" class="logo"><h1>Mabel Statement</h1></a>
+    <nav class="navbar">
+      <a href="#home">home</a>
+      <a href="#offers">What's New</a>
+      <a href="#browse">browse</a>
+      <a href="#about">Visit us</a>
+    </nav>
+    <div class="icons">
+      <a href="checkout.html">
+        <div class="fa fa-shopping-bag" id="cart-btn" style="position: relative;">
+          <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
+        </div>
+      </a>
+      <div class="fa fa-bars" id="menu-btn"></div>
+    </div>
+  </header>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <section class="home" id="home">
+    <div class="content">
+      <h3>Mabel Statement</h3>
+      <a href="#offers" class="btn">shop now</a>
+    </div>
+  </section>
+
+  <section>
+    <h1 class="heading"><span>Special</span> offers</h1>
+    <div id="offers" class="product-grid">Loading offers...</div>
+  </section>
+
+  <section>
+    <h1 class="heading">Browse All Products</h1>
+    <section id="filters" class="filters">
+      <select id="categoryFilter"><option value="">All categories</option></select>
+      <input id="minPrice" type="number" placeholder="Min KES" min="0" />
+      <input id="maxPrice" type="number" placeholder="Max KES" min="0" />
+      <label><input type="checkbox" id="offerOnly" /> On offer</label>
+      <button id="applyFilters" class="btn">Apply</button>
+    </section>
+    <div id="browse" class="product-grid">Loading products...</div>
+  </section>
+
+  <section class="about" id="about">
+    <h1 class="heading"><span>Visit</span> us</h1>
+    <div class="row">
+      <div class="image"><img src="assets/images/fashion-6066661_1920.jpg" alt=""></div>
+      <div class="content">
+        <h3>Our Store</h3>
+        <p class="fa fa-map-marker"> Visit us At Sawa mall</p>
+        <p> Store Number m26</p>
+        <h3>Contact us</h3>
+        <p class="fab fa-whatsapp"> +254 748 398646</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer">
+    <div class="share">
+      <a href="#" class="fab fa-facebook"></a>
+      <a href="#" class="fab fa-twitter"></a>
+      <a href="#" class="fab fa-instagram"></a>
+      <a href="#" class="fab fa-pinterest"></a>
+    </div>
+    <div class="links">
+      <a href="#home">home</a>
+      <a href="#offers">What's New</a>
+      <a href="#about">Visit us</a>
+    </div>
+    <div class="credit">Mabel <span>Statements</span> | all rights reserved</div>
+  </section>
+
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+  const API = 'http://localhost:3000/api/products';
+
+  // DOM refs
+  const offersDiv  = document.getElementById('offers');
+  const browseDiv  = document.getElementById('browse');
+  const cartBadge  = document.getElementById('cart-badge');
+  const catSelect  = document.getElementById('categoryFilter');
+  const minIn      = document.getElementById('minPrice');
+  const maxIn      = document.getElementById('maxPrice');
+  const offerChk   = document.getElementById('offerOnly');
+  const applyBtn   = document.getElementById('applyFilters');
+
+  // ----------------------------------
+  // 1️⃣   Fetch *once* — hold in memory
+  // ----------------------------------
+  let allProducts = [];
+  init();
+  async function init() {
+    allProducts = await fetchProducts();
+    populateCategories(allProducts);
+    render(allProducts);               // first paint: unfiltered
+  }
+
+  applyBtn.addEventListener('click', () => {
+    // build browse-only filter
+    let filtered = [...allProducts];
+
+    if (catSelect.value)
+      filtered = filtered.filter(p => p.category === catSelect.value);
+
+    if (minIn.value)
+      filtered = filtered.filter(p => Number(p.price) >= Number(minIn.value));
+
+    if (maxIn.value)
+      filtered = filtered.filter(p => Number(p.price) <= Number(maxIn.value));
+
+    if (offerChk.checked)
+      filtered = filtered.filter(p => p.isOffer);
+
+    render(filtered);                  // ⬅️ only browse gets filtered
+  });
+
+  // ----------------------------------
+  // 2️⃣   helpers
+  // ----------------------------------
+  async function fetchProducts() {
+    const res = await fetch(API);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
+
+  function populateCategories(products) {
+    const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
+    catSelect.innerHTML = '<option value="">All categories</option>';
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = opt.textContent = c;
+      catSelect.appendChild(opt);
+    });
+  }
+
+  // ----------------------------------
+  // 3️⃣   render() = offers (always) + browse (list passed in)
+  // ----------------------------------
+  function render(browseList) {
+    offersDiv.innerHTML = '';
+    browseDiv.innerHTML = '';
+
+    // Offers: always from *allProducts*
+    allProducts
+      .filter(p => p.isOffer)
+      .forEach(p => offersDiv.appendChild(makeCard(p, true)));
+
+    if (!browseList.length) {
+      browseDiv.textContent = 'No products match.';
+    } else {
+      browseList.forEach(p => browseDiv.appendChild(makeCard(p, false)));
+    }
+
+    if (!offersDiv.children.length)
+      offersDiv.textContent = 'Currently no offers.';
+
+    attachCartListeners();
+    updateCartBadge();
+  }
+
+      function makeCard(p) {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const mainImg = p.imageUrl.startsWith('http') ? p.imageUrl : `http://localhost:3000${p.imageUrl}`;
+  const hoverImg = p.hoverImageUrl && p.hoverImageUrl.startsWith('http') 
+      ? p.hoverImageUrl 
+      : p.hoverImageUrl 
+        ? `http://localhost:3000${p.hoverImageUrl}` 
+        : mainImg;
+
+  const isOffer = p.isOffer && Number(p.discount) > 0;
+  const discount = Number(p.discount) || 0;
+  const priceOld = Number(p.price);
+  const priceNew = (priceOld * (100 - discount) / 100).toFixed(2);
+
+  card.innerHTML = `
+  <div class="img-wrapper-container" style="position:relative">
+    ${isOffer ? `
+      <span class="discount-badge">-${discount}%</span>
+    ` : ''}
+    <div class="img-wrapper">
+      <img src="${mainImg}" alt="${p.name}" class="main">
+      <img src="${hoverImg}" alt="${p.name}" class="hover">
+    </div>
+  </div>
+  <h3>${p.name}</h3>
+  ${isOffer
+    ? `<p>
+         <span style="text-decoration:line-through;color:#888;">
+           KES ${priceOld.toLocaleString()}
+         </span><br>
+         <strong style="color:#ce8e1a;">KES ${priceNew}</strong>
+       </p>`
+    : `<p>KES ${priceOld.toLocaleString()}</p>` }
+  <small>In stock: ${p.stock}</small>
+  <button class="add-to-cart-btn"
+          data-id="${p._id}"
+          data-name="${p.name}"
+          data-price="${isOffer ? priceNew : priceOld}"
+          data-stock="${p.stock}"
+          data-img="${mainImg}">
+    Add to Cart
+  </button>
+
+  `;
+
+  return card;
+}
+
+
+
+      function attachCartListeners() {
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const name = btn.dataset.name;
+            const price = parseFloat(btn.dataset.price);
+            const stock = parseInt(btn.dataset.stock);
+            const img   = btn.dataset.img;
+
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            let item = cart.find(i => i.id === id);
+
+            if (item) {
+              if (item.quantity < stock) {
+                item.quantity++;
+                showToast(`Added another "${name}"`);
+              } else {
+                showToast(`Only ${stock} left in stock.`);
+                return;
+              }
+            } else {
+              cart.push({ id, name, price, stock, quantity: 1, img });
+              showToast(`Added "${name}" to cart`);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+          });
+        });
+      }
+
+      function updateCartBadge() {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+        if (totalQty > 0) {
+          cartBadge.style.display = 'inline-block';
+          cartBadge.textContent = totalQty;
+        } else {
+          cartBadge.style.display = 'none';
+        }
+      }
+
+      function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+      }
+    });
+  </script>
+  
+  <script src="script.js"></script>
+</body>
+</html>

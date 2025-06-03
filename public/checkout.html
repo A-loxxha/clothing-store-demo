@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Styles.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+  <style>
+    :root {
+      --main-color:#ceb974;
+      --black:#161515d5;
+      --bg:#00000038;
+      --border:2px solid rgba(114, 114, 114, 0.13);
+      --sec-main-color:rgb(231, 177, 59);
+      --hover-black:#00000036;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 3rem;
+      font-family: 'Playfair Display', serif;
+      padding: 1.5rem;
+      color: var(--main-color);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .checkout-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Cart items at top */
+    .cart-items {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .cart-items h3 {
+      margin-top: 0;
+      color: var(--main-color);
+    }
+    .cart-item {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .cart-details {
+      flex: 1;
+      font-size: 1rem;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+    }
+    .controls button {
+      padding: 4px 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .checkout-summary {
+      font-size: 1.5rem;
+      text-align: right;
+      margin: 20px 0;
+      color: var(--black);
+    }
+
+    /* Form styles */
+    form > div {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .payment-methods {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    .payment-methods label {
+      font-weight: normal;
+      font-size: 1rem;
+    }
+    .card-fields, .mpesa-field {
+      display: none;
+      margin-top: 10px;
+    }
+    .btn {
+      margin-top: 1rem;
+      display: inline-block;
+      padding: 10px 5px;
+      font-size: 1.7rem;
+      color: #fff;
+      background: var(--main-color);
+      cursor: pointer;
+      transition: 0.5s;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+      text-align: center;
+    }
+    .btn:hover {
+      letter-spacing: 2px;
+      color: var(--main-color);
+      background: #0000007a;
+      box-shadow: 0 0 30px 0px;
+    }
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      display: none;
+      margin-top: 5px;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=ASyhtXUdDlKg6ZFDVoHMCQJiMNKo-w63osYT_a24zXvdwoRjuXPQmqZjXZ_oqewrotjxykLN9Xi4qBt4&currency=USD"></script>
+
+<!-- Cart Items -->
+<div class="cart-items" id="cart-items">
+  <h3>Your Cart</h3>
+  <p id="empty-msg">Your cart is empty.</p>
+  <p class="checkout-summary" id="total-amount">Total: KES 0</p>
+</div>
+
+<!-- Checkout Form -->
+<div class="checkout-container">
+  <h2>Checkout</h2>
+  <form id="checkout-form">
+    <label>Full Name <input type="text" id="fullName" required /></label>
+    <label>Address <input type="text" id="address" required /></label>
+    <label>City <input type="text" id="city" required /></label>
+    <label>Postal Code <input type="text" id="postal" required /></label>
+    <label>Country
+      <select id="country" required>
+        <option value="">Select country</option>
+        <option value="Kenya">Kenya</option>
+        <option value="Uganda">Uganda</option>
+        <option value="Tanzania">Tanzania</option>
+      </select>
+    </label>
+
+    <div class="payment-methods">
+      <label><input type="radio" name="payment" value="card" required> Card</label>
+      <label><input type="radio" name="payment" value="mpesa"> M‑Pesa</label>
+    </div>
+
+    <div class="card-fields" id="card-fields">
+      <p>Use the PayPal button below to complete your card payment.</p>
+    </div>
+
+    <div id="paypal-button-container"></div>
+
+    <div class="mpesa-field" id="mpesa-field">
+      <label>M‑Pesa Phone No. <input type="tel" id="mpesaPhone" pattern="\d{10}" placeholder="07XXXXXXXX" /></label>
+    </div>
+
+    <button type="submit" class="btn">Place Order</button>
+  </form>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:3000/api/products';
+const cart            = JSON.parse(localStorage.getItem('cart')) || [];
+const productStock    = {};                    // { productId: stockQty }
+const cartBox         = document.getElementById('cart-items');
+const totalDisplay    = document.getElementById('total-amount');
+const paypalBox       = document.getElementById('paypal-button-container');
+const mpesaField      = document.getElementById('mpesa-field');
+const paymentRadios   = document.getElementsByName('payment');
+
+/* fetch stock once so we can cap quantity */
+async function fetchStock() {
+  const res = await fetch(API_BASE);
+  (await res.json()).forEach(p => productStock[p._id] = p.stock ?? Infinity);
+}
+
+/* ---------- cart render ---------- */
+function renderCart() {
+  cartBox.querySelectorAll('.cart-item').forEach(el => el.remove());
+
+  let totalKES = 0;
+  if (!cart.length) {
+    document.getElementById('empty-msg').style.display = 'block';
+    totalDisplay.textContent = 'Total: KES 0';
+    togglePayPal(false);
+    return;
+  }
+  document.getElementById('empty-msg').style.display = 'none';
+
+  cart.forEach((item, i) => {
+    const max = productStock[item.id] ?? Infinity;
+    item.quantity = Math.min(item.quantity, max);            // auto-shrink if stock fell
+
+    totalKES += item.price * item.quantity;
+
+    const row = document.createElement('div');
+row.className = 'cart-item';
+row.innerHTML = `
+  <img src="${item.img || 'placeholder.jpg'}" alt="${item.name}">
+  <div class="cart-details">
+    <strong>${item.name}</strong><br>
+    KES ${item.price} ×
+    <div class="controls">
+      <button onclick="changeQty(${i},-1)">−</button>
+      <span>${item.quantity}</span>
+      <button onclick="changeQty(${i},1)" ${item.quantity >= max ? 'disabled' : ''}>+</button>
+    </div>
+    Subtotal: KES ${(item.price * item.quantity).toLocaleString()}
+  </div>`;
+
+    totalDisplay.insertAdjacentElement('beforebegin', row);
+  });
+
+  totalDisplay.textContent = `Total: KES ${totalKES.toLocaleString()}`;
+
+  /* (re)render PayPal every time total changes */
+  const sel = [...paymentRadios].find(r => r.checked)?.value;
+  if (sel === 'card') {
+    paypalBox.style.display = 'block';
+    paypalBox.innerHTML = '';                         // clear previous buttons
+    renderPayPal(totalKES / 110);                     // ⚠️ quick KES→USD demo rate
+  }
+}
+
+/* ---------- quantity change ---------- */
+window.changeQty = function (index, delta) {
+  const max = productStock[cart[index].id] ?? Infinity;
+  cart[index].quantity += delta;
+
+  if (cart[index].quantity < 1) {
+    if (confirm('Remove this item from cart?')) cart.splice(index, 1);
+    else cart[index].quantity = 1;
+  }
+  if (cart[index]) cart[index].quantity = Math.min(cart[index].quantity, max);
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+};
+
+/* ---------- PayPal ---------- */
+function renderPayPal(totalUSD) {
+  paypal.Buttons({
+    style:{ shape:'rect', color:'gold', layout:'vertical' },
+    createOrder: (_, actions) =>
+      actions.order.create({ purchase_units:[{ amount:{ value:totalUSD.toFixed(2) } }] }),
+    onApprove: (_, actions) =>
+      actions.order.capture().then(det=>{
+        alert('Payment complete 🎉 id: '+det.id);
+        localStorage.removeItem('cart');
+        window.location='thank-you.html';
+      })
+  }).render('#paypal-button-container');
+}
+function togglePayPal(show) { paypalBox.style.display = show ? 'block' : 'none'; }
+
+/* ---------- payment method toggle ---------- */
+paymentRadios.forEach(r => r.addEventListener('change', () => {
+  if (r.value === 'card') {
+    mpesaField.style.display = 'none';
+    renderCart();                     // re-render to (re)show PayPal buttons
+  } else {
+    mpesaField.style.display = 'block';
+    togglePayPal(false);
+  }
+}));
+
+/* ---------- form submit (mock) ---------- */
+document.getElementById('checkout-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const payment = [...paymentRadios].find(r => r.checked)?.value;
+
+  if (!payment) return alert('Please select a payment method.');
+
+  const form = e.target;
+  const shipping = {
+    name: form.fullName.value,
+    address: form.address.value,
+    city: form.city.value,
+    postal: form.postal.value,
+    country: form.country.value
+  };
+
+  if (payment === 'mpesa') {
+  let phone = form.mpesaPhone.value.trim();
+  if (!/^07\d{8}$/.test(phone)) return alert('Enter a valid Safaricom number.');
+  phone = phone.replace(/^0/, '254'); // Convert to international format
+
+  const totalKES = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+
+    try {
+      const res = await fetch('http://localhost:3000/api/stk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, amount: totalKES })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert('STK Push sent! Check your phone to complete payment.');
+        localStorage.removeItem('cart');
+        window.location.href = 'thank-you.html';
+      } else {
+        alert('Failed to initiate payment.');
+      }
+    } catch (err) {
+      alert('Error contacting payment server.');
+      console.error(err);
+    }
+  }
+
+  if (payment === 'card') {
+    // PayPal flow is handled by PayPal SDK
+    alert('Complete payment via PayPal button below.');
+  }
+});
+
+
+/* ---------- kick things off ---------- */
+fetchStock().then(renderCart);
+</script>
+</body>
+</html>
