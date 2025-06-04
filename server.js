@@ -24,7 +24,7 @@ app.use('/api/products', productRoutes);
 
 // ── Redirect root to home.html ──
 app.get('/', (req, res) => {
-  res.redirect('/home.html');
+  res.redirect('/Home.html');
 });
 
 
