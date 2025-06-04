@@ -160,7 +160,7 @@
 
   <script type="module">
     document.addEventListener('DOMContentLoaded', () => {
-  const API = 'http://localhost:3000/api/products';
+  const API = 'https://clothing-store-demo.onrender.com/api/products';
 
   // DOM refs
   const offersDiv  = document.getElementById('offers');
@@ -250,7 +250,7 @@
   const card = document.createElement('div');
   card.className = 'card';
 
-  const mainImg = p.imageUrl.startsWith('http') ? p.imageUrl : `http://localhost:3000${p.imageUrl}`;
+  const mainImg = p.imageUrl.startsWith('http') ? p.imageUrl : `https://clothing-store-demo.onrender.com${p.imageUrl}`;
   const hoverImg = p.hoverImageUrl && p.hoverImageUrl.startsWith('http') 
       ? p.hoverImageUrl 
       : p.hoverImageUrl 
