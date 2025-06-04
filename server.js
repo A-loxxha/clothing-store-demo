@@ -6,6 +6,9 @@ const cors     = require('cors');
 const path     = require('path');
 const productRoutes = require('./routes/products');
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,6 +22,10 @@ app.use(cors());
 app.use(express.json()); // for JSON bodies
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/products', productRoutes);
+
+app.get('/', (req, res) => {
+  res.redirect('/Home.html');
+});
 
 // ── Connect to MongoDB ──
 mongoose.connect(process.env.MONGO_URI, {
