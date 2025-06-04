@@ -22,6 +22,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/products', productRoutes);
 
+// ── Redirect root to home.html ──
+app.get('/', (req, res) => {
+  res.redirect('/home.html');
+});
+
+
 // ── Connect to MongoDB ──
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
