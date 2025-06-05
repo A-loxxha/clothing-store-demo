@@ -209,9 +209,11 @@ const paymentRadios   = document.getElementsByName('payment');
 
 /* fetch stock once so we can cap quantity */
 async function fetchStock() {
-  const res = await fetch(API_BASE);
-  (await res.json()).forEach(p => productStock[p._id] = p.stock ?? Infinity);
+  const res = await fetch(`${API_BASE}/api/products`);
+  const products = await res.json();
+  products.forEach(p => productStock[p._id] = p.stock ?? Infinity);
 }
+
 
 /* ---------- cart render ---------- */
 function renderCart() {
