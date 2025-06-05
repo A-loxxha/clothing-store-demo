@@ -237,7 +237,7 @@ function renderCart() {
     const row = document.createElement('div');
 row.className = 'cart-item';
 row.innerHTML = `
-  <img src="${item.img || 'placeholder.jpg'}" alt="${item.name}">
+  <img src="${API_BASE}/uploads/${item.img || 'placeholder.jpg'}" alt="${item.name}" onerror="this.src='placeholder.jpg'">
   <div class="cart-details">
     <strong>${item.name}</strong><br>
     KES ${item.price} ×
@@ -248,6 +248,7 @@ row.innerHTML = `
     </div>
     Subtotal: KES ${(item.price * item.quantity).toLocaleString()}
   </div>`;
+
 
     totalDisplay.insertAdjacentElement('beforebegin', row);
   });
