@@ -331,7 +331,7 @@ document.getElementById('checkout-form').addEventListener('submit', async e => {
 
 
     try {
-      const res = await fetch('http://localhost:3000/api/stk', {
+      const res = await fetch('https://localhost:3000/api/stk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, amount: totalKES })
