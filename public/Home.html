@@ -254,7 +254,7 @@
   const hoverImg = p.hoverImageUrl && p.hoverImageUrl.startsWith('http') 
       ? p.hoverImageUrl 
       : p.hoverImageUrl 
-        ? `http://localhost:3000${p.hoverImageUrl}` 
+        ? `https://localhost:3000${p.hoverImageUrl}` 
         : mainImg;
 
   const isOffer = p.isOffer && Number(p.discount) > 0;
