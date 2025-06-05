@@ -250,12 +250,18 @@
   const card = document.createElement('div');
   card.className = 'card';
 
-  const mainImg = p.imageUrl.startsWith('http') ? p.imageUrl : `https://clothing-store-demo.onrender.com${p.imageUrl}`;
-  const hoverImg = p.hoverImageUrl && p.hoverImageUrl.startsWith('http') 
-      ? p.hoverImageUrl 
-      : p.hoverImageUrl 
-        ? `https://localhost:3000${p.hoverImageUrl}` 
-        : mainImg;
+ const baseURL = 'https://clothing-store-demo.onrender.com';
+
+const mainImg = p.imageUrl.startsWith('http') 
+  ? p.imageUrl.replace('http://', 'https://') 
+  : `${baseURL}${p.imageUrl}`;
+
+const hoverImg = p.hoverImageUrl
+  ? (p.hoverImageUrl.startsWith('http')
+      ? p.hoverImageUrl.replace('http://', 'https://')
+      : `${baseURL}${p.hoverImageUrl}`)
+  : mainImg;
+
 
   const isOffer = p.isOffer && Number(p.discount) > 0;
   const discount = Number(p.discount) || 0;
