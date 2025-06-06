@@ -124,10 +124,6 @@ section{
     color: var(--main-color);
 }
 
-.header .icons div:hover{
-    color: var(--main-color);
-
-}
 
 #menu-btn{
     display: none;
