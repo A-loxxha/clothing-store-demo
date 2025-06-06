@@ -172,7 +172,7 @@ section{
 .header .cart-items-container{
     position: absolute;
     top: 100%; right: -100%;
-    height:calc(100vh - 9.5rem);
+    height:calc(100vh - 13.5rem);
     width: 15rem;
     background: none;
     padding: 0 1.5rem;
