@@ -7,43 +7,198 @@
   <link rel="stylesheet" href="Styles.css" />
   
   <style>
-    body { padding: 10rem; font-family: sans-serif; }
-    form { margin-bottom: 2rem; max-width: 600px; }
-    form input, form label, form button {
-      display: block; 
-      width: 100%; 
-      margin: 1rem 0; 
-      padding: 1rem; 
-      border: var(--border); 
-      border-radius: 10px 0 30px 0;
-    }
-    form label { font-weight: bold; margin-top: 1.5rem; }
-    form button {
-      background: #2d8cf0;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    form button:hover { background: #1a75d1; }
+  :root {
+    --primary-color: #2d8cf0;
+    --primary-hover: #1a75d1;
+    --danger: #f44336;
+    --danger-hover: #d32f2f;
+    --success: #4caf50;
+    --success-hover: #3e8e41;
+    --bg-color: #f8f9fb;
+    --card-bg: #fff;
+    --border-radius: 12px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --font: 'Segoe UI', 'Poppins', sans-serif;
+  }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 3rem; }
-    th, td { border: 1px solid #ccc; padding: 1.5rem; text-align: center; }
-    img.thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; }
+  body {
+    margin: 0;
+    padding: 4rem;
+    font-family: var(--font);
+    background-color: var(--bg-color);
+    color: #333;
+  }
+
+  h1, h2 {
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1.5rem;
+  }
+
+  .heading {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  form {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin: 0 auto 4rem auto;
+    max-width: 700px;
+  }
+
+  form label {
+    margin-top: 1.2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  form input, form button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+
+  form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(45, 140, 240, 0.2);
+  }
+
+  form button {
+    background: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+  }
+
+  form button:hover {
+    background: var(--primary-hover);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  table th, table td {
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  table th {
+    background: #f1f3f5;
+    font-weight: 600;
+    color: #555;
+  }
+
+  table tbody tr:nth-child(even) {
+    background-color: #f9fafc;
+  }
+
+  input[data-field] {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  img.thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    transition: transform 0.3s ease;
+  }
+
+  .update-btn, .delete-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+
+  .update-btn {
+    background-color: var(--success);
+  }
+
+  .update-btn:hover {
+    background-color: var(--success-hover);
+  }
+
+  .delete-btn {
+    background-color: var(--danger);
+  }
+
+  .delete-btn:hover {
+    background-color: var(--danger-hover);
+  }
+
+  /* Hover image swap */
+  .main-img, .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    transition: opacity 0.4s ease;
+  }
+
+  .hover-img {
+    opacity: 0;
+  }
+
+  tr:hover .hover-img {
+    opacity: 1;
+  }
+
+  tr:hover .main-img {
+    opacity: 0;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 2rem;
+    }
+
+    form {
+      padding: 2rem;
+    }
+
+    table th, table td {
+      font-size: 0.85rem;
+      padding: 1rem;
+    }
+
     .update-btn, .delete-btn {
       padding: 0.4rem 0.8rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      color: white;
-      margin: 0 0.2rem;
     }
-    label { font-family:'Poppins'; font-size: 1.5rem; }
-    .update-btn { background: #4caf50; }
-    .delete-btn { background: #f44336; }
-    .update-btn:hover { background: #3e8e41; }
-    .delete-btn:hover { background: #d32f2f; }
-  </style>
+  }
+</style>
 </head>
 <body>
   <h1 class="heading">Admin Panel</h1>
