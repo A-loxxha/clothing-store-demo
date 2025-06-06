@@ -124,6 +124,17 @@ section{
     color: var(--main-color);
 }
 
+.icons div{
+    color: #fff;
+    cursor: pointer;
+    font-size: 2.5rem;
+    margin-left: 2rem;
+}
+
+.icons div:hover{
+    color: var(--main-color);
+}
+
 
 #menu-btn{
     display: none;
