@@ -808,9 +808,16 @@ body{
     #menu-btn{
         display: inline-block;
     }
-         .header .icon {
+         .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 5%;
+    gap: 1rem;
+  }
+
+  .header .icon {
     order: -1;
-    flex: content;
+    align-self: flex-start;
   }
 
   .header .icon div {
@@ -825,22 +832,25 @@ body{
   .header .logo h1 {
     font-size: 1.8rem;
   }
-        .header .navbar{
-            position: absolute;
-            top: 100%; 
-            left: -100%;
-            background: #fff;
-            width: 30rem;
-            height: calc(100vh -9.5rem);
-        }
-    
-        .header .navbar a{
-            color: var(--black);
-            display: block;
-            margin: 1.5rem;
-            padding: 0.5rem;
-            font-size: 2rem;
-        }
+
+  .header .navbar {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: var(--bg);
+    padding: 1rem 0;
+  }
+
+  .header .navbar a {
+    padding: 0.8rem 5%;
+    font-size: 1.4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .header .icons {
+    align-self: flex-end;
+  }
+}
     
         .header .navbar.active{
             left: 0;
