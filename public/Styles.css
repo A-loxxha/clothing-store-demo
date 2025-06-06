@@ -808,10 +808,27 @@ body{
     #menu-btn{
         display: inline-block;
     }
+         .header .icon {
+    order: -1;
+    flex: content;
+  }
+
+  .header .icon div {
+    font-size: 2.5rem;
+  }
+
+  .header .logo {
+    order: 0;
+    align-self: center;
+  }
+
+  .header .logo h1 {
+    font-size: 1.8rem;
+  }
         .header .navbar{
             position: absolute;
             top: 100%; 
-            right: -100%;
+            left: -100%;
             background: #fff;
             width: 30rem;
             height: calc(100vh -9.5rem);
@@ -826,7 +843,7 @@ body{
         }
     
         .header .navbar.active{
-            right: 0;
+            left: 0;
         }
 
         .header .search-form{
