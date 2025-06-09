@@ -85,9 +85,7 @@ section{
 
 .btn:hover{
     letter-spacing: 2px;
-    color: var(--main-color);
     background: #0000007a;
-    box-shadow: 0 0 30px 0px ;
     border-radius: 10px 0 30px 0px  
 }
 
@@ -608,9 +606,7 @@ body{
 }
 
 .add-to-cart:hover {
-    color: var(--main-color);
     background: #0000007a;
-    box-shadow: 0 0 30px 0px ;
     border-radius: 10px 0 30px 0px  
 }
 #cart-button {
@@ -694,9 +690,7 @@ body{
 
 #checkout-btn:hover{
     letter-spacing: 2px;
-    color: var(--main-color);
     background: #0000007a;
-    box-shadow: 0 0 30px 0px ;
     border-radius: 10px 0 30px 0px  
 }
 
@@ -758,9 +752,7 @@ body{
 }
 
     .card .add-to-cart-btn:hover{
-    color: var(--main-color);
     background: #0000007a;
-    box-shadow: 0 0 30px 0px ;
     border-radius: 10px 0 30px 0px 
     }
 
@@ -1043,9 +1035,7 @@ body{
         }
 
         .add-to-cart{
-            color: var(--main-color);
             background: #0000007a;
-            box-shadow: 0 0 30px 0px ;
             border-radius: 10px 0 30px 0px 
         }
 
@@ -1076,11 +1066,10 @@ body{
         }
 
         .card .add-to-cart-btn{
-            color: var(--main-color);
             background: #0000007a;
-            box-shadow: 0 0 30px 0px ;
             border-radius: 10px 0 30px 0px 
     }
+    
     }      
 
 @media(max-width:450px){
