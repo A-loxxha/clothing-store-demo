@@ -37,47 +37,63 @@
   <div class="product-grid" id="productGrid"></div>
 
   <script>
-    const API_BASE = 'https://clothing-store-demo.onrender.com/api/products';
-    const params = new URLSearchParams(window.location.search);
-    const category = params.get('cat');
-    const titleEl = document.querySelector('.category-title');
-    const grid = document.getElementById('productGrid');
+const API_BASE = 'https://clothing-store-demo.onrender.com/api/products';
+const params = new URLSearchParams(window.location.search);
+const category = params.get('cat');
+const searchTerm = params.get('search')?.toLowerCase() || '';
+const titleEl = document.querySelector('.category-title');
+const grid = document.getElementById('productGrid');
 
-    async function fetchCategoryProducts() {
-      titleEl.textContent = category ? category : 'All Products';
-      try {
-        const res = await fetch(API_BASE);
-        const products = await res.json();
-        if (!Array.isArray(products)) throw new Error('Invalid response');
+async function fetchCategoryProducts() {
+  titleEl.textContent = category
+    ? `Results for "${searchTerm}" in ${category}`
+    : searchTerm
+    ? `Results for "${searchTerm}"`
+    : category
+    ? category
+    : 'All Products';
 
-        const filtered = category
-          ? products.filter(p => p.category?.toLowerCase() === category.toLowerCase())
-          : products;
+  try {
+    const res = await fetch(API_BASE);
+    const products = await res.json();
+    if (!Array.isArray(products)) throw new Error('Invalid response');
 
-        if (filtered.length === 0) {
-          grid.innerHTML = '<p>No products found for this category.</p>';
-          return;
-        }
+    const filtered = products.filter(p => {
+      const matchCategory = category
+        ? p.category?.toLowerCase() === category.toLowerCase()
+        : true;
 
-        grid.innerHTML = '';
-        filtered.forEach(p => {
-          const card = document.createElement('div');
-          card.className = 'product-card';
-          card.innerHTML = `
-            <img src="${p.imageUrl?.startsWith('/') ? p.imageUrl : '/uploads/' + p.imageUrl}" alt="${p.name}">
-            <h3>${p.name}</h3>
-            <p><strong>KES ${p.price?.toFixed(2)}</strong></p>
-          `;
-          grid.appendChild(card);
-        });
+      const matchSearch = searchTerm
+        ? p.name?.toLowerCase().includes(searchTerm)
+        : true;
 
-      } catch (err) {
-        console.error(err);
-        grid.innerHTML = '<p>Error loading products.</p>';
-      }
+      return matchCategory && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<p>No matching products found.</p>';
+      return;
     }
 
-    fetchCategoryProducts();
+    grid.innerHTML = '';
+    filtered.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${p.imageUrl?.startsWith('/') ? p.imageUrl : '/uploads/' + p.imageUrl}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p><strong>KES ${p.price?.toFixed(2)}</strong></p>
+      `;
+      grid.appendChild(card);
+    });
+  } catch (err) {
+    console.error(err);
+    grid.innerHTML = '<p>Error loading products.</p>';
+  }
+}
+
+fetchCategoryProducts();
+    
   </script>
 </body>
 </html>
