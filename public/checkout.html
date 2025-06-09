@@ -254,6 +254,13 @@ row.innerHTML = `
   });
 
   totalDisplay.textContent = `Total: KES ${totalKES.toLocaleString()}`;
+  
+  ///////tell users to login
+  if (!localStorage.getItem('token')) {
+  alert("Please log in to proceed to checkout.");
+  window.location.href = "login.html";
+}
+//////////
 
   /* (re)render PayPal every time total changes */
   const sel = [...paymentRadios].find(r => r.checked)?.value;
