@@ -47,6 +47,10 @@ body{
     background: #ffffff;
 }
 
+body.no-scroll {
+  overflow: hidden;
+}
+
 section{
     padding: 2rem 7%;
 }
