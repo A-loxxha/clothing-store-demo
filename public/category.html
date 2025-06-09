@@ -6,94 +6,134 @@
   <link rel="stylesheet" href="Styles.css">
   <style>
     body { font-family: sans-serif; padding: 2rem; }
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 2rem;
-    }
-    .product-card {
-      border: 1px solid #ddd;
-      padding: 1rem;
-      border-radius: 10px;
-      transition: box-shadow 0.3s;
-    }
-    .product-card:hover {
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .product-card img {
+    .card img {
       width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
+      transition: opacity 0.3s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: pointer;
     }
-    h2.category-title {
-      margin-bottom: 2rem;
-      text-transform: capitalize;
+
+    .card .img-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 200%;
+      /* adjust for aspect ratio */
+      overflow: hidden;
+    }
+
+    .card .img-wrapper img.hover {
+      opacity: 0;
+    }
+
+    .card .img-wrapper:hover img.hover {
+      opacity: 1;
+    }
+
+    .card .img-wrapper:hover img.main {
+      opacity: 0;
     }
   </style>
 </head>
 <body>
   <h2 class="category-title">Loading...</h2>
-  <div class="product-grid" id="productGrid"></div>
+<section>
+  <h1 class="heading">Category Results</h1>
+  <div id="category-products" class="product-grid">Loading...</div>
+</section>
 
-  <script>
-const API_BASE = 'https://clothing-store-demo.onrender.com/api/products';
-const params = new URLSearchParams(window.location.search);
-const category = params.get('cat');
-const searchTerm = params.get('search')?.toLowerCase() || '';
-const titleEl = document.querySelector('.category-title');
-const grid = document.getElementById('productGrid');
 
-async function fetchCategoryProducts() {
-  titleEl.textContent = category
-    ? `Results for "${searchTerm}" in ${category}`
-    : searchTerm
-    ? `Results for "${searchTerm}"`
-    : category
-    ? category
-    : 'All Products';
+  <script type="module">
+  document.addEventListener('DOMContentLoaded', async () => {
+    const API = 'https://clothing-store-demo.onrender.com/api/products';
+    const container = document.getElementById('category-products');
 
-  try {
-    const res = await fetch(API_BASE);
-    const products = await res.json();
-    if (!Array.isArray(products)) throw new Error('Invalid response');
+    // Parse URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('cat');
+    const search = params.get('search');
 
-    const filtered = products.filter(p => {
-      const matchCategory = category
-        ? p.category?.toLowerCase() === category.toLowerCase()
-        : true;
+    try {
+      const res = await fetch(API);
+      const products = await res.json();
 
-      const matchSearch = searchTerm
-        ? p.name?.toLowerCase().includes(searchTerm)
-        : true;
+      let filtered = products;
+      if (category) {
+        filtered = filtered.filter(p => p.category === category);
+      }
 
-      return matchCategory && matchSearch;
-    });
+      if (search) {
+        filtered = filtered.filter(p =>
+          p.name.toLowerCase().includes(search.toLowerCase()) ||
+          p.category.toLowerCase().includes(search.toLowerCase())
+        );
+      }
 
-    if (filtered.length === 0) {
-      grid.innerHTML = '<p>No matching products found.</p>';
-      return;
+      if (!filtered.length) {
+        container.textContent = 'No matching products found.';
+      } else {
+        container.innerHTML = '';
+        filtered.forEach(p => container.appendChild(makeCard(p)));
+      }
+    } catch (err) {
+      container.textContent = 'Failed to load products.';
+      console.error(err);
     }
 
-    grid.innerHTML = '';
-    filtered.forEach(p => {
+    function makeCard(p) {
       const card = document.createElement('div');
-      card.className = 'product-card';
-      card.innerHTML = `
-        <img src="${p.imageUrl?.startsWith('/') ? p.imageUrl : '/uploads/' + p.imageUrl}" alt="${p.name}">
-        <h3>${p.name}</h3>
-        <p><strong>KES ${p.price?.toFixed(2)}</strong></p>
-      `;
-      grid.appendChild(card);
-    });
-  } catch (err) {
-    console.error(err);
-    grid.innerHTML = '<p>Error loading products.</p>';
-  }
-}
+      card.className = 'card';
 
-fetchCategoryProducts();
-    
-  </script>
+      const baseURL = 'https://clothing-store-demo.onrender.com';
+
+      const mainImg = p.imageUrl.startsWith('http')
+        ? p.imageUrl.replace('http://', 'https://')
+        : `${baseURL}${p.imageUrl}`;
+
+      const hoverImg = p.hoverImageUrl
+        ? (p.hoverImageUrl.startsWith('http')
+            ? p.hoverImageUrl.replace('http://', 'https://')
+            : `${baseURL}${p.hoverImageUrl}`)
+        : mainImg;
+
+      const isOffer = p.isOffer && Number(p.discount) > 0;
+      const discount = Number(p.discount) || 0;
+      const priceOld = Number(p.price);
+      const priceNew = (priceOld * (100 - discount) / 100).toFixed(2);
+
+      card.innerHTML = `
+        <div class="img-wrapper-container" style="position:relative">
+          ${isOffer ? `<span class="discount-badge">-${discount}%</span>` : ''}
+          <div class="img-wrapper">
+            <img src="${mainImg}" alt="${p.name}" class="main">
+            <img src="${hoverImg}" alt="${p.name}" class="hover">
+          </div>
+        </div>
+        <h3>${p.name}</h3>
+        ${isOffer
+          ? `<p>
+              <span style="text-decoration:line-through;color:#888;">
+                KES ${priceOld.toLocaleString()}
+              </span><br>
+              <strong style="color:#ce8e1a;">KES ${priceNew}</strong>
+            </p>`
+          : `<p>KES ${priceOld.toLocaleString()}</p>` }
+        <small>In stock: ${p.stock}</small>
+        <button class="add-to-cart-btn"
+                data-id="${p._id}"
+                data-name="${p.name}"
+                data-price="${isOffer ? priceNew : priceOld}"
+                data-stock="${p.stock}"
+                data-img="${mainImg}">
+          Add to Cart
+        </button>
+      `;
+
+      return card;
+    }
+  });
+</script>
+
 </body>
 </html>
