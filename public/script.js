@@ -5,42 +5,6 @@ document.querySelector('#menu-btn').onclick = () =>{
     
 }
 
-const categoryToggle = document.querySelector('.category-toggle');
-const categoryOverlay = document.getElementById('categoryOverlay');
-const closeCategory = document.querySelector('.close-category');
-
-categoryToggle.addEventListener('click', () => {
-  categoryOverlay.classList.add('active');
-  categoryOverlay.style.display = 'block';
-});
-
-closeCategory.addEventListener('click', () => {
-  categoryOverlay.classList.remove('active');
-  setTimeout(() => {
-    categoryOverlay.style.display = 'none';
-  }, 300); // match the slide transition
-});
-
-// Optional: Close when clicking outside the sidebar
-categoryOverlay.addEventListener('click', (e) => {
-  if (e.target === categoryOverlay) {
-    closeCategory.click();
-  }
-});
-
-
-
-let cartItem =document.querySelector('.cart-items-container');
-
-document.querySelector('#cart-btn').onclick = () =>{
-    navbar.classList.remove('active');
-}
-
-
-
-window.onscroll = () =>{
-    navbar.classList.remove('active');
-}
 
 ///////////////////
 
@@ -73,7 +37,50 @@ window.onscroll = () =>{
     });
 });
 
+//////category side menu///////
 
+  const categoryToggle = document.querySelector('.category-toggle');
+const categoryOverlay = document.getElementById('categoryOverlay');
+const closeCategory = document.querySelector('.close-category');
+
+categoryToggle.addEventListener('click', () => {
+  categoryOverlay.classList.add('active');
+  categoryOverlay.style.display = 'block';
+  document.body.classList.add('no-scroll');
+});
+
+closeCategory.addEventListener('click', () => {
+  categoryOverlay.classList.remove('active');
+  setTimeout(() => {
+    categoryOverlay.style.display = 'none';
+    document.body.classList.remove('no-scroll');
+  }, 300); // match the slide transition
+});
+
+// Optional: Close when clicking outside the sidebar
+categoryOverlay.addEventListener('click', (e) => {
+  if (e.target === categoryOverlay) {
+    closeCategory.click();
+  }
+});
+
+
+
+
+
+
+
+let cartItem =document.querySelector('.cart-items-container');
+
+document.querySelector('#cart-btn').onclick = () =>{
+    navbar.classList.remove('active');
+}
+
+
+
+window.onscroll = () =>{
+    navbar.classList.remove('active');
+}
 
 filterButtons.forEach(button => {
   button.addEventListener('click', () => {
