@@ -12,21 +12,20 @@
       gap: 2rem;
     }
     .product-card {
-      border: 1px solid #ddd;
-      padding: 1rem;
-      border-radius: 10px;
-      transition: box-shadow 0.3s;
+      position: relative;
+      width: 100%;
+      padding-top: 200%;
+      /* adjust for aspect ratio */
+      overflow: hidden;
     }
     .product-card:hover {
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .product-card img {
       width: 100%;
-      transition: opacity 0.3s ease;
-      position: absolute;
-      top: 0;
-      left: 0;
-      cursor: pointer;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
     }
     h2.category-title {
       margin-bottom: 2rem;
