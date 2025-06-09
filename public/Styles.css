@@ -273,6 +273,9 @@ section{
     color: var(--main-color);
 }
 
+.header .search-form .btn{
+  margin-top: -0.1rem;
+}
 .header .cart-items-container{
     position: absolute;
     top: 100%; right: -100%;
