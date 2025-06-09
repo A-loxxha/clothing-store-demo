@@ -956,8 +956,8 @@ body{
 
         .header .navbar .category-sidebar h3{
             color: var(--main-color);
-            font-size: 3rem;
-            margin-bottom: 12rem;
+            font-size: 3rem
+            margin-bottom: 8.7rem;
         }
 
         .category-toggle{
