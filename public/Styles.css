@@ -51,6 +51,7 @@ body.no-scroll {
   overflow: hidden;
 }
 
+
 section{
     padding: 2rem 7%;
 }
@@ -186,6 +187,7 @@ section{
   width: 100vw;
   height: 100vh;
   display: none;
+  background: var(--black);
   z-index: 2000;
 }
 
@@ -197,7 +199,8 @@ section{
   width: 250px;
   height: 100%;
   background: #ffffff;
-  padding: 2rem;
+  padding-left: 2rem;
+  padding-top: -3rem;
   transform: translateX(100%); /* Start hidden to the right */
   transition: transform 0.3s ease;
 }
@@ -273,8 +276,9 @@ section{
 }
 
 .header .search-form .btn{
-  margin-top: -0.15rem;
+  margin-top: -0.1rem;
 }
+
 .header .cart-items-container{
     position: absolute;
     top: 100%; right: -100%;
@@ -956,11 +960,34 @@ body{
 
         .header .navbar .category-sidebar h3{
             color: var(--main-color);
-            font-size: 3rem
+            font-size: 3rem;
             margin-bottom: 8.7rem;
         }
 
         .category-toggle{
+            color: var(--black);
+            display: block;
+            margin: 1.5rem;
+            padding: 0.5rem;
+            font-size: 2rem;
+        }
+
+
+        .header .navbar .collection-sidebar a{
+            display: block;
+            color: var(--black);
+            text-decoration: none;
+            margin: 1rem 0;
+            font-size: 2.0rem;
+        }
+
+        .header .navbar .collection-sidebar h3{
+            color: var(--main-color);
+            font-size: 3rem;
+            margin-bottom: 12rem;
+        }
+
+        .collection-toggle{
             color: var(--black);
             display: block;
             margin: 1.5rem;
