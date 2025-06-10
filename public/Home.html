@@ -365,6 +365,19 @@ const hoverImg = p.hoverImageUrl
         }
       }
 
+      // Check login on page load
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+
+  // Logout functionality
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+  });
+
       function showToast(msg) {
         const toast = document.createElement('div');
         toast.className = 'toast';
