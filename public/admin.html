@@ -362,31 +362,20 @@
 
       // 3) POST to backend
       try {
-  const res = await fetch(API_BASE, {
-    method: 'POST',
-    body: formData
-  });
-
-  const contentType = res.headers.get('content-type');
-  let data;
-
-  if (contentType && contentType.includes('application/json')) {
-    data = await res.json();
-  } else {
-    const text = await res.text(); // fallback for HTML error
-    throw new Error(`Unexpected response: ${text}`);
-  }
-
-  if (!res.ok) throw new Error(data.error || 'Failed to add product');
-
-  form.reset();
-  fetchAndRenderProducts();
-  alert('✅ Product added!');
-} catch (err) {
-  console.error('❌ Upload error:', err);
-  alert('❌ ' + err.message);
-}
-
+        const res = await fetch(API_BASE, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to add product');
+        form.reset();
+        fetchAndRenderProducts();
+        alert('✅ Product added!');
+      } catch (err) {
+        console.error(err);
+        alert('❌ ' + err.message);
+      }
+    });
 
     // ── Fetch & Render Products ──
     async function fetchAndRenderProducts() {
@@ -412,7 +401,7 @@ document.getElementById('totalOffers').textContent = offers.length;
 
         products.forEach(p => {
           const tr = document.createElement('tr');
-          tr.innerHTML = `
+          tr.innerHTML = 
             <td>
               <div style="position: relative; width: 80px; height: 80px;">
                 <img src="${p.imageUrl?.startsWith('/') ? p.imageUrl : '/uploads/' + p.imageUrl}" class="thumb main-img" />
@@ -428,13 +417,13 @@ document.getElementById('totalOffers').textContent = offers.length;
               <button class="update-btn" data-id="${p._id}">Update</button>
               <button class="delete-btn" data-id="${p._id}">Delete</button>
             </td>
-          `;
+          ;
 
           // Hover CSS (inject into page once)
           if (!document.getElementById('hover-css')) {
             const style = document.createElement('style');
             style.id = 'hover-css';
-            style.innerHTML = `
+            style.innerHTML = 
               .main-img, .hover-img {
                 position: absolute;
                 top: 0; left: 0;
@@ -445,7 +434,7 @@ document.getElementById('totalOffers').textContent = offers.length;
               .hover-img { opacity: 0; }
               tr:hover .hover-img { opacity: 1; }
               tr:hover .main-img { opacity: 0; }
-            `;
+            ;
             document.head.appendChild(style);
           }
 
@@ -474,7 +463,7 @@ document.getElementById('totalOffers').textContent = offers.length;
             updatedProduct.isOffer = (updatedProduct.discount > 0);
 
             try {
-              const res = await fetch(`${API_BASE}/${p._id}`, {
+              const res = await fetch(${API_BASE}/${p._id}, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedProduct)
@@ -492,7 +481,7 @@ document.getElementById('totalOffers').textContent = offers.length;
           tr.querySelector('.delete-btn').addEventListener('click', async () => {
             if (!confirm('Delete this product?')) return;
             try {
-              await fetch(`${API_BASE}/${p._id}`, { method: 'DELETE' });
+              await fetch(${API_BASE}/${p._id}, { method: 'DELETE' });
               fetchAndRenderProducts();
               alert('🗑️ Product deleted');
             } catch (err) {
