@@ -195,7 +195,27 @@
   const maxIn      = document.getElementById('maxPrice');
   const offerChk   = document.getElementById('offerOnly');
   const applyBtn   = document.getElementById('applyFilters');
+      
+/////////Show_Guest
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user'));
 
+  // Redirect to login if not logged in
+  if (!token || !user) {
+    window.location.href = 'login.html';
+  }
+
+  // Show welcome message
+  document.getElementById('welcomeUser').textContent = `Welcome, ${user.name}`;
+
+  // Logout functionality
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+  });
+
+      
   // ----------------------------------
   // 1️⃣   Fetch *once* — hold in memory
   // ----------------------------------
