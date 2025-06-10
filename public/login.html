@@ -54,7 +54,7 @@
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
 
-    const res = await fetch(`${API_URL}/register`, {
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password }),
