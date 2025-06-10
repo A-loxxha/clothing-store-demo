@@ -8,7 +8,18 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" />
   <style>
     body { font-family: sans-serif; }
-
+        
+    .discount-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #e53935;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      z-index: 10; /* make sure it stays above the images */
+}
     .card img {
       width: 100%;
       transition: opacity 0.3s ease;
