@@ -362,20 +362,31 @@
 
       // 3) POST to backend
       try {
-        const res = await fetch(API_BASE, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to add product');
-        form.reset();
-        fetchAndRenderProducts();
-        alert('✅ Product added!');
-      } catch (err) {
-        console.error(err);
-        alert('❌ ' + err.message);
-      }
-    });
+  const res = await fetch(API_BASE, {
+    method: 'POST',
+    body: formData
+  });
+
+  const contentType = res.headers.get('content-type');
+  let data;
+
+  if (contentType && contentType.includes('application/json')) {
+    data = await res.json();
+  } else {
+    const text = await res.text(); // fallback for HTML error
+    throw new Error(`Unexpected response: ${text}`);
+  }
+
+  if (!res.ok) throw new Error(data.error || 'Failed to add product');
+
+  form.reset();
+  fetchAndRenderProducts();
+  alert('✅ Product added!');
+} catch (err) {
+  console.error('❌ Upload error:', err);
+  alert('❌ ' + err.message);
+}
+
 
     // ── Fetch & Render Products ──
     async function fetchAndRenderProducts() {
