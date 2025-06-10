@@ -54,11 +54,16 @@
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
 
-    const res = await fetch('https://clothing-store-demo.onrender.com/api/users', {
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password }),
     });
+    
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
 
     const data = await res.json();
     if (res.ok) {
@@ -73,12 +78,18 @@
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    const res = await fetch('https://clothing-store-demo.onrender.com/api/users', {
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/login', {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
+     if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+    
     const data = await res.json();
     if (res.ok && data.token) {
       localStorage.setItem('token', data.token);
