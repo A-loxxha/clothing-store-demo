@@ -15,7 +15,15 @@ const PORT = process.env.PORT || 3000;
 // ── Middleware ──
 app.use(cors());
 app.use(express.json()); // for JSON bodies
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// ── Serve static frontend files ──
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Optional: Handle default route to serve home.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'Home.html'));
+});
+
 
 // ── API Routes ──
 app.use('/api/products', productRoutes);
