@@ -73,7 +73,7 @@
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    const res = await fetch('https://clothing-store-demo.onrender.com/api/users'}/login`, {
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/users'}, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
