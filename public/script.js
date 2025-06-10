@@ -88,7 +88,7 @@ document.querySelector('#cart-btn').onclick = () =>{
 window.onscroll = () =>{
     navbar.classList.remove('active');
 }
-const filterButtons = document.querySelectorAll('.filter-button');
+const filterButtons = document.querySelectorAll('.filters');
 filterButtons.forEach(button => {
   button.addEventListener('click', () => {
     const category = button.dataset.category;
