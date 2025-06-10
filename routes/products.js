@@ -6,6 +6,14 @@ const mongoose = require('mongoose');
 const Product  = require('../models/product');
 
 const router = express.Router();
+const fs = require('fs');
+
+// Ensure /uploads folder exists
+const uploadsPath = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath);
+}
+
 
 // ── Multer storage configuration for image uploads ──
 const storage = multer.diskStorage({
