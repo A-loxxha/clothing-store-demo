@@ -38,7 +38,7 @@
   }
 </style>
 <script>
-  const API_URL = 'http://localhost:3000/api/users'; // change if hosted elsewhere
+  const API_URL = 'https://clothing-store-demo.onrender.com'; // change if hosted elsewhere
 
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -75,7 +75,7 @@
     if (res.ok && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      window.location.href = 'home.html'; // or wherever you redirect after login
+      window.location.href = 'Home.html'; // or wherever you redirect after login
     } else {
       document.getElementById('authMessage').textContent = data.message || 'Login failed';
     }
