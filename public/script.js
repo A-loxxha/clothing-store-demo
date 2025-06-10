@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   container.innerHTML = ''; // Clear static cards
 
   try {
-    const res = await fetch('http://localhost:3000/api/products');
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/products');
     const products = await res.json();
 
     if (!res.ok) throw new Error(products.error || 'Failed to fetch');
