@@ -40,7 +40,16 @@ router.post('/', upload.fields([
 
     if (req.files) {
       if (req.files.image1 && req.files.image1.length > 0) {
-        const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+        const baseUrl = process.env.NODE_ENV === 'production'
+  ? 'https://clothing-store-demo.onrender.com'
+  : `${req.protocol}://${req.get('host')}`;
+
+if (req.files.image1 && req.files.image1.length > 0) {
+  imageUrl = `${baseUrl}/uploads/${req.files.image1[0].filename}`;
+}
+if (req.files.image2 && req.files.image2.length > 0) {
+  hoverImageUrl = `${baseUrl}/uploads/${req.files.image2[0].filename}`;
+}
       }
       if (req.files.image2 && req.files.image2.length > 0) {
         hoverImageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.files.image2[0].filename}`;
