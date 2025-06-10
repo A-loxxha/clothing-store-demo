@@ -344,9 +344,9 @@ h1{
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: url(assets/images/fashion-6066661_1920.jpg) no-repeat;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),url(assets/images/WhatsApp\ Image\ 2025-05-23\ at\ 14.50.54_dfa9a2b8.jpg ) no-repeat;
     background-size: cover;
-    background-position: center 150px;
+    background-position: center 50px;
     background-attachment: fixed;
  }
 
@@ -1059,7 +1059,7 @@ body{
 
          
         .home{
-            background-position: right;
+            background-position: center 80px;
             justify-content: center;
             text-align: center;
         }
