@@ -18,6 +18,8 @@ app.use(express.json()); // for JSON bodies
 // ── Serve static frontend files ──
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Optional: Handle default route to serve home.html
 app.get('/', (req, res) => {
