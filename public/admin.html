@@ -375,6 +375,8 @@
           alert('❌ ' + err.message);
         }
       });
+      
+  document.getElementById('categoryFilter')?.addEventListener('change', fetchAndRenderProducts);
 
       // ── Fetch & Render Products ──
       async function fetchAndRenderProducts() {
