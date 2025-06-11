@@ -115,7 +115,12 @@
 
       let filtered = products;
       if (category) {
-        filtered = filtered.filter(p => p.category === category);
+        filtered = filtered.filter(p => {
+  const normalizedCategory = (p.category || '').replace(/[\s_]+/g, '').toLowerCase();
+  const normalizedParam = category.replace(/[\s_]+/g, '').toLowerCase();
+  return normalizedCategory === normalizedParam;
+});
+
       }
 
       if (search) {
