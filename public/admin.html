@@ -275,7 +275,21 @@
 </style>
 </head>
 <body>
-  <h1 class="heading"><span>Mabel Statement</span> Admin Pannel</h1>
+  <header class="header">
+    <a href="#" class="logo">
+      <h1>Mabel Statement</h1>
+    </a>
+    <div class="icon">
+      <div class="fa fa-bars" id="menu-btn"></div>
+    </div>
+    <nav class="navbar">
+      <a href="#Home">Home</a>
+      <a href="#Add">Add Items</a>
+      <a href="#Products">Products</a>
+    
+
+  </header>
+  <h1 class="heading" id="Home"><span>Mabel Statement</span> Admin Pannel</h1>
 
   <div id="dashboardSummary" style="display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center; flex-wrap: wrap;">
   <div style="flex: 1; min-width: 200px; background: var(--card-bg); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
@@ -293,7 +307,7 @@
 </div>
 
 
-  <h3 class="heading">Add Items </h3>
+  <h3 class="heading" id="Add">Add Items </h3>
 
   <form id="productForm" enctype="multipart/form-data">
     <label for="name">Product Name</label>
@@ -320,7 +334,7 @@
     <button type="submit">Save Product</button>
   </form>
 
-  <h3 class="heading">Product Inventory</h3>
+  <h3 class="heading" id="Products">Product Inventory</h3>
    <label for="categoryFilter"><strong>Filter by Category:</strong></label>
 <select id="categoryFilter">
   <option value="all">All</option>
