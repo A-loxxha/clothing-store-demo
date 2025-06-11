@@ -972,14 +972,15 @@ body{
 }
 
 .modal-content p {
-  font-size: 1rem;
-  margin-bottom: 0.8rem;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
   line-height: 1.5;
   color: #444;
 }
 
 .modal-content del {
   color: #888;
+  text-decoration: line-through;
 }
 
 .modal-content span {
