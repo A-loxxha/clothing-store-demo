@@ -1,57 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Category | Mabel Statement</title>
-  <link rel="stylesheet" href="Styles.css">
+  <title>Admin | Mabel Statement</title>
+  <link rel="stylesheet" href="Styles.css" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" />
+  
   <style>
-    body { font-family: sans-serif; }
-        
-    .discount-badge {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: #e53935;
-      color: #fff;
-      font-size: 0.8rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      z-index: 10; /* make sure it stays above the images */
+  :root {
+    --primary-color: #2d8cf0;
+    --primary-hover: #1a75d1;
+    --danger: #f44336;
+    --danger-hover: #d32f2f;
+    --success: #4caf50;
+    --success-hover: #3e8e41;
+    --bg-color: #f8f9fb;
+    --card-bg: #fff;
+    --border-radius: 12px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --font: 'Playfair Display', 'Poppins', sans-serif;
+  }
+
+  body {
+    margin: 0;
+    padding: 4rem;
+    font-family: var(--font);
+    background-color: var(--bg-color);
+  }
+
+  .heading {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    margin-top: 14rem;
+    background: var(--hover-black);
+    border-radius: 10px 0 30px 0px; 
+  }
+
+
+  form {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin: 0 auto 4rem auto;
+    max-width: 700px;
+  }
+
+  form label {
+    margin-top: 1.2rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #333;
+    font-family:'Playfair Display', sans-serif;
+  }
+
+  form input, form button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px 0 30px 0px; 
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+
+  form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px rgba(45, 140, 240, 0.2);
+  }
+
+  form button {
+    background: var(--main-color);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px 0 30px 0px; 
+    transition: 0.3s ease;
+  }
+
+  form button:hover {
+    cursor: pointer;
+    background: var(--primary-hover);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  table th, table td {
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  table th {
+    background: #f1f3f5;
+    font-weight: 600;
+    color: #555;
+  }
+
+  table tbody tr:nth-child(even) {
+    background-color: #f9fafc;
+  }
+
+  input[data-field] {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  img.thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    transition: transform 0.3s ease;
+  }
+
+  .update-btn, .delete-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: 0.3s ease;
+  }
+
+  .update-btn {
+    background-color: var(--success);
+  }
+
+  .update-btn:hover {
+    background-color: var(--success-hover);
+  }
+
+  .delete-btn {
+    background-color: var(--danger);
+  }
+
+  .delete-btn:hover {
+    background-color: var(--danger-hover);
+  }
+
+  /* Hover image swap */
+  .main-img, .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    transition: opacity 0.4s ease;
+  }
+
+  .hover-img {
+    opacity: 0;
+  }
+
+  tr:hover .hover-img {
+    opacity: 1;
+  }
+
+  tr:hover .main-img {
+    opacity: 0;
+  }
+
+   strong{
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1.5rem;
+    color: var(--black);
+  }
+  
+
+    @media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  .heading {
+    font-size: 3.0rem;
+    text-align: center;
+  }
+
+  form {
+    padding: 1.5rem;
+    width: 100%;
+    margin-bottom: 2rem;
+    background: var(--hover-black);
+  }
+
+  form input, form button {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  table {
+    font-size: 0.85rem;
+    box-shadow: none;
+    overflow-x: auto;
+    display: block;
+    background-color: var(--hover-black);
+  }
+
+  table thead {
+    display: none;
+  }
+
+  table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+  }
+
+  table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  table td:last-child {
+    border-bottom: none;
+  }
+
+  table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #555;
+  }
+
+  .main-img, .hover-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .update-btn, .delete-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+      @media (max-width: 768px) {
+    body {
+      padding: 2rem;
+    }
+
+    form {
+      padding: 2rem;
+    }
+
+    table th, table td {
+      font-size: 0.85rem;
+      padding: 1rem;
+    }
+
+    .update-btn, .delete-btn {
+      padding: 0.4rem 0.8rem;
+    }
 }
-    .card img {
-      width: 100%;
-      transition: opacity 0.3s ease;
-      position: absolute;
-      top: 0;
-      left: 0;
-      cursor: pointer;
-    }
 
-    .card .img-wrapper {
-      position: relative;
-      width: 100%;
-      padding-top: 200%;
-      /* adjust for aspect ratio */
-      overflow: hidden;
-    }
-
-    .card .img-wrapper img.hover {
-      opacity: 0;
-    }
-
-    .card .img-wrapper:hover img.hover {
-      opacity: 1;
-    }
-
-    .card .img-wrapper:hover img.main {
-      opacity: 0;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-    <header class="header">
+  <header class="header">
     <a href="#" class="logo">
       <h1>Mabel Statement</h1>
     </a>
@@ -59,141 +290,258 @@
       <div class="fa fa-bars" id="menu-btn"></div>
     </div>
     <nav class="navbar">
-      <a href="Home.html">Home</a>
-      <a class="category-toggle">Categories ▸</a>
-      <div id="categoryOverlay" class="category-overlay">
-        <div class="category-sidebar">
-          <div class="close-category">&times;</div>
-          <h3>Categories</h3>
-
-          <a href="category.html">All Products</a>
-          <a href="category.html?cat=Dress">Dresses</a>
-          <a href="category.html?cat=Mini_Dress">Mini-Dresses</a>
-          <a href="category.html?cat=Midi_Dress">Midi-Dresses</a>
-          <a href="category.html?cat=Maxi_Dress">Maxi-Dresses</a>
-          <a href="category.html?cat=Perfume">Perfumes</a>
-          <a href="category.html?cat=Accessory">Accessories</a>
-        </div>
+      <a href="#Overview">Overview</a>
+      <a href="#Add">Add Items</a>
+      <a href="#Products">Products</a>
     </nav>
-  
     <div class="icons">
-        <div class="fa fa-search" id="search-btn"></div>
-      <a href="checkout.html">
-        <div class="fa fa-shopping-bag" id="cart-btn" style="position: relative;">
-          <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
-        </div>
-      </a>
+      <div class="fa fa-search" id="search-btn"></div>
+    
     </div>
-
     <form class="search-form" id="searchForm" action="category.html" method="get">
       <input type="text" name="search" placeholder="Search products..." required>
       <button class="btn" type="submit">Search</button>
     </form>
-
+    
+  
   </header>
+  <h1 class="heading" id="Overview"><span>Mabel Statement</span> Admin Pannel</h1>
 
-  <div id="toast-container" class="toast-container"></div>
+  <div id="dashboardSummary" style="display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center; flex-wrap: wrap;">
+  <div style="flex: 1; min-width: 200px; background: var(--card-bg); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
+    <h3>Total Items</h3>
+    <p id="totalItems" style="font-size: 2rem; font-weight: bold;">0</p>
+  </div>
+  <div style="flex: 1; min-width: 200px; background: var(--card-bg); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
+    <h3>Total Stock</h3>
+    <p id="totalStock" style="font-size: 2rem; font-weight: bold;">0</p>
+  </div>
+  <div style="flex: 1; min-width: 200px; background: var(--card-bg); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
+    <h3>On Offer</h3>
+    <p id="totalOffers" style="font-size: 2rem; font-weight: bold;">0</p>
+  </div>
+</div>
 
-  <section>
-  <h1 class="heading">Category Results</h1>
-  <div id="category-products" class="product-grid">Loading...</div>
-</section>
-  <script src="script.js"></script>
-  <script type="module">
-  document.addEventListener('DOMContentLoaded', async () => {
-    const API = 'https://clothing-store-demo.onrender.com/api/products';
-    const container = document.getElementById('category-products');
 
-    // Parse URL parameters
-    const params = new URLSearchParams(window.location.search);
-    const category = params.get('cat');
-    const search = params.get('search');
+  <h3 class="heading" id="Add">Add Items </h3>
 
-    try {
-      const res = await fetch(API);
-      const products = await res.json();
+  <form id="productForm" enctype="multipart/form-data">
+    <label for="name">Product Name</label>
+    <input type="text" id="name" name="name" placeholder="e.g. Sweater" required />
 
-      let filtered = products;
-      if (category) {
-        filtered = filtered.filter(p => {
-  const normalizedCategory = (p.category || '').replace(/[\s_]+/g, '').toLowerCase();
-  const normalizedParam = category.replace(/[\s_]+/g, '').toLowerCase();
-  return normalizedCategory === normalizedParam;
-});
+    <label for="price">Price (KES)</label>
+    <input type="number" id="price" name="price" step="0.01" placeholder="e.g. 1500" required />
 
-      }
+    <label for="category">Category</label>
+    <input type="text" id="category" name="category" placeholder="e.g. Dress" />
 
-      if (search) {
-        filtered = filtered.filter(p =>
-          p.name.toLowerCase().includes(search.toLowerCase()) ||
-          p.category.toLowerCase().includes(search.toLowerCase())
-        );
-      }
+    <label for="stock">Stock Quantity</label>
+    <input type="number" id="stock" name="stock" placeholder="e.g. 10" />
 
-      if (!filtered.length) {
-        container.textContent = 'No matching products found.';
-      } else {
-        container.innerHTML = '';
-        filtered.forEach(p => container.appendChild(makeCard(p)));
-      }
-    } catch (err) {
-      container.textContent = 'Failed to load products.';
-      console.error(err);
+    <label for="discount">Discount (%)</label>
+    <input type="number" id="discount" name="discount" min="0" max="100" value="0" />
+
+    <label for="image1">Primary Image</label>
+    <input type="file" id="image1" name="image1" accept="image/*" required />
+
+    <label for="image2">Hover Image</label>
+    <input type="file" id="image2" name="image2" accept="image/*" />
+
+    <button type="submit">Save Product</button>
+  </form>
+
+  <h3 class="heading" id="Products">Product Inventory</h3>
+   <label for="categoryFilter"><strong>Filter by Category:</strong></label>
+<select id="categoryFilter">
+  <option value="all">All</option>
+  <!-- These will be dynamically populated with actual categories -->
+</select>
+  <table id="productsTable">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Discount (%)</th>
+        <th>Stock</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const API_BASE = 'https://clothing-store-demo.onrender.com/api/products';
+      const form = document.getElementById('productForm');
+      const tableBody = document.querySelector('#productsTable tbody');
+
+      // ── Add Product (POST) ──
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        let disc = parseInt(formData.get('discount'), 10);
+        if (isNaN(disc) || disc < 0) disc = 0;
+        if (disc > 100) disc = 100;
+        formData.set('discount', disc);
+
+        const img1 = document.getElementById('image1');
+        const img2 = document.getElementById('image2');
+        if (img1 && img1.files[0]) formData.set('image1', img1.files[0]);
+        if (img2 && img2.files[0]) formData.set('image2', img2.files[0]);
+
+        try {
+          const res = await fetch(API_BASE, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Failed to add product');
+          form.reset();
+          fetchAndRenderProducts();
+          alert('✅ Product added!');
+        } catch (err) {
+          console.error(err);
+          alert('❌ ' + err.message);
+        }
+      });
+
+      // ── Fetch & Render Products ──
+      async function fetchAndRenderProducts() {
+  tableBody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
+  try {
+    const res = await fetch(API_BASE);
+    const products = await res.json();
+    if (!Array.isArray(products) || products.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="7">No products yet.</td></tr>';
+      return;
     }
 
-    function makeCard(p) {
-      const card = document.createElement('div');
-      card.className = 'card';
+    // Update summary counts
+    const totalItemsEl = document.getElementById('totalItems');
+if (totalItemsEl) totalItemsEl.textContent = products.length;
 
-      const baseURL = 'https://clothing-store-demo.onrender.com';
+const totalStockEl = document.getElementById('totalStock');
+if (totalStockEl) totalStockEl.textContent = products.reduce((sum, p) => sum + (p.stock || 0), 0);
 
-      const mainImg = p.imageUrl.startsWith('http')
-        ? p.imageUrl.replace('http://', 'https://')
-        : `${baseURL}${p.imageUrl}`;
+const totalOffersEl = document.getElementById('totalOffers');
+if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount > 0).length;
 
-      const hoverImg = p.hoverImageUrl
-        ? (p.hoverImageUrl.startsWith('http')
-            ? p.hoverImageUrl.replace('http://', 'https://')
-            : `${baseURL}${p.hoverImageUrl}`)
-        : mainImg;
 
-      const isOffer = p.isOffer && Number(p.discount) > 0;
-      const discount = Number(p.discount) || 0;
-      const priceOld = Number(p.price);
-      const priceNew = (priceOld * (100 - discount) / 100).toFixed(2);
+    // Collect unique categories
+    const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
 
-      card.innerHTML = `
-        <div class="img-wrapper-container" style="position:relative">
-          ${isOffer ? `<span class="discount-badge">-${discount}%</span>` : ''}
-          <div class="img-wrapper">
-            <img src="${mainImg}" alt="${p.name}" class="main">
-            <img src="${hoverImg}" alt="${p.name}" class="hover">
+    // Populate filter dropdown if it's empty
+    const filterSelect = document.getElementById('categoryFilter');
+    if (filterSelect && filterSelect.options.length <= 1) {
+      categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        filterSelect.appendChild(opt);
+      });
+    }
+
+    // Get current selected filter
+    const selectedCategory = filterSelect?.value || 'all';
+
+    tableBody.innerHTML = '';
+    products.forEach(p => {
+      if (selectedCategory !== 'all' && p.category !== selectedCategory) return;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="position: relative; width: 80px; height: 80px;">
+            <img src="${p.imageUrl}" class="thumb main-img" />
+            <img src="${p.hoverImageUrl || p.imageUrl}" class="thumb hover-img" />
           </div>
-        </div>
-        <h3>${p.name}</h3>
-        ${isOffer
-          ? `<p>
-              <span style="text-decoration:line-through;color:#888;">
-                KES ${priceOld.toLocaleString()}
-              </span><br>
-              <strong style="color:#ce8e1a;">KES ${priceNew}</strong>
-            </p>`
-          : `<p>KES ${priceOld.toLocaleString()}</p>` }
-        <small>In stock: ${p.stock}</small>
-        <button class="add-to-cart-btn"
-                data-id="${p._id}"
-                data-name="${p.name}"
-                data-price="${isOffer ? priceNew : priceOld}"
-                data-stock="${p.stock}"
-                data-img="${mainImg}">
-          Add to Cart
-        </button>
+        </td>
+        <td><input type="text" value="${p.name || ''}" data-field="name" /></td>
+        <td><input type="number" value="${p.price?.toFixed(2) || 0}" data-field="price" step="0.01" /></td>
+        <td><input type="number" value="${p.discount || 0}" data-field="discount" min="0" max="100" /></td>
+        <td><input type="number" value="${p.stock || 0}" data-field="stock" /></td>
+        <td><input type="text" value="${p.category || ''}" data-field="category" /></td>
+        <td>
+          <button class="update-btn" data-id="${p._id}">Update</button>
+          <button class="delete-btn" data-id="${p._id}">Delete</button>
+        </td>
       `;
 
-      return card;
-    }
-  });
-</script>
+      // Add hover effect styles once
+      if (!document.getElementById('hover-css')) {
+        const style = document.createElement('style');
+        style.id = 'hover-css';
+        style.innerHTML = `
+          .main-img, .hover-img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 80px; height: 80px;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+          }
+          .hover-img { opacity: 0; }
+          tr:hover .hover-img { opacity: 1; }
+          tr:hover .main-img { opacity: 0; }
+        `;
+        document.head.appendChild(style);
+      }
 
+      // Update button
+      tr.querySelector('.update-btn').addEventListener('click', async () => {
+        const updatedProduct = {};
+        tr.querySelectorAll('[data-field]').forEach(input => {
+          const field = input.dataset.field;
+          const val = input.value.trim();
+          if (field === 'price') updatedProduct.price = parseFloat(val) || 0;
+          else if (field === 'discount') updatedProduct.discount = Math.min(100, Math.max(0, parseInt(val) || 0));
+          else if (field === 'stock') updatedProduct.stock = parseInt(val) || 0;
+          else updatedProduct[field] = val;
+        });
+        updatedProduct.isOffer = updatedProduct.discount > 0;
+        try {
+          const res = await fetch(`${API_BASE}/${p._id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedProduct)
+          });
+          if (!res.ok) throw new Error('Update failed');
+          fetchAndRenderProducts();
+          alert('✅ Product updated!');
+        } catch (err) {
+          console.error(err);
+          alert('❌ ' + err.message);
+        }
+      });
+
+      // Delete button
+      tr.querySelector('.delete-btn').addEventListener('click', async () => {
+        if (!confirm('Delete this product?')) return;
+        try {
+          await fetch(`${API_BASE}/${p._id}`, { method: 'DELETE' });
+          fetchAndRenderProducts();
+          alert('🗑️ Product deleted');
+        } catch (err) {
+          console.error(err);
+          alert('❌ ' + err.message);
+        }
+      });
+
+      tableBody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+    tableBody.innerHTML = '<tr><td colspan="7">Error loading products.</td></tr>';
+  }
+}
+document.getElementById('categoryFilter')?.addEventListener('change', fetchAndRenderProducts);
+
+      // ── Initial Load ──
+      fetchAndRenderProducts();
+    });
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>
