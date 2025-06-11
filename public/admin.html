@@ -390,9 +390,15 @@
     }
 
     // Update summary counts
-    document.getElementById('totalItems')?.textContent = products.length;
-    document.getElementById('totalStock')?.textContent = products.reduce((sum, p) => sum + (p.stock || 0), 0);
-    document.getElementById('totalOffers')?.textContent = products.filter(p => p.discount > 0).length;
+    const totalItemsEl = document.getElementById('totalItems');
+if (totalItemsEl) totalItemsEl.textContent = products.length;
+
+const totalStockEl = document.getElementById('totalStock');
+if (totalStockEl) totalStockEl.textContent = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+
+const totalOffersEl = document.getElementById('totalOffers');
+if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount > 0).length;
+
 
     // Collect unique categories
     const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
