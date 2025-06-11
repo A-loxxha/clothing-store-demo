@@ -196,6 +196,19 @@
   const maxIn      = document.getElementById('maxPrice');
   const offerChk   = document.getElementById('offerOnly');
   const applyBtn   = document.getElementById('applyFilters');
+
+      // Close modal when X is clicked
+document.querySelector('.close').addEventListener('click', () => {
+  document.getElementById('productModal').style.display = 'none';
+});
+
+// Close modal when clicking outside the modal content
+window.addEventListener('click', (e) => {
+  const modal = document.getElementById('productModal');
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
       
 /////////Show_Guest
 
