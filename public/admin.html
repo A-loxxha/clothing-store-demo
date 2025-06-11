@@ -33,6 +33,7 @@
     font-size: 3.5rem;
     text-align: center;
     margin-bottom: 1rem;
+    margin-top: 13rem;
     background: var(--hover-black);
     border-radius: 10px 0 30px 0px; 
   }
@@ -286,8 +287,17 @@
       <a href="#Home">Home</a>
       <a href="#Add">Add Items</a>
       <a href="#Products">Products</a>
+    </nav>
+    <div class="icons">
+      <div class="fa fa-search" id="search-btn"></div>
     
-
+    </div>
+    <form class="search-form" id="searchForm" action="category.html" method="get">
+      <input type="text" name="search" placeholder="Search products..." required>
+      <button class="btn" type="submit">Search</button>
+    </form>
+    
+  
   </header>
   <h1 class="heading" id="Home"><span>Mabel Statement</span> Admin Pannel</h1>
 
@@ -526,5 +536,6 @@ document.getElementById('categoryFilter')?.addEventListener('change', fetchAndRe
       fetchAndRenderProducts();
     });
   </script>
+  <script src="script.js"></script>
 </body>
 </html>
