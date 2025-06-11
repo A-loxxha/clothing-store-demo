@@ -18,7 +18,7 @@
     body {
       font-family: 'Poppins', sans-serif;
       background: #f5f5f5;
-      margin: 0;
+      margin-top: 15rem;
       padding: 20px;
     }
 
@@ -150,9 +150,42 @@
   </style>
 </head>
 <body>
+  <header class="header">
+    <a href="#" class="logo">
+      <h1>Mabel Statement</h1>
+    </a>
+    <div class="icon">
+      <div class="fa fa-bars" id="menu-btn"></div>
+    </div>
+    <nav class="navbar">
+      <a href="Home.html">Home</a>
+      <a class="category-toggle">Categories ▸</a>
+      <div id="categoryOverlay" class="category-overlay">
+        <div class="category-sidebar">
+          <div class="close-category">&times;</div>
+          <h3>Categories</h3>
 
-<!-- PayPal SDK -->
-<script src="https://www.paypal.com/sdk/js?client-id=ASyhtXUdDlKg6ZFDVoHMCQJiMNKo-w63osYT_a24zXvdwoRjuXPQmqZjXZ_oqewrotjxykLN9Xi4qBt4&currency=USD"></script>
+          <a href="category.html">All Products</a>
+          <a href="category.html?cat=Mini_Dress">Mini-Dresses</a>
+          <a href="category.html?cat=Midi_Dress">Midi-Dresses</a>
+          <a href="category.html?cat=Maxi_Dress">Maxi-Dresses</a>
+          <a href="category.html?cat=Perfume">Perfumes</a>
+          <a href="category.html?cat=Accessory">Accessories</a>
+        </div>
+    </nav>
+  
+    <div class="icons">
+        <div class="fa fa-search" id="search-btn"></div>
+    
+    </div>
+
+    <form class="search-form" id="searchForm" action="category.html" method="get">
+      <input type="text" name="search" placeholder="Search products..." required>
+      <button class="btn" type="submit">Search</button>
+    </form>
+
+  </header>
+
 
 <!-- Cart Items -->
 <div class="cart-items" id="cart-items">
@@ -163,40 +196,39 @@
 
 <!-- Checkout Form -->
 <div class="checkout-container">
-  <h2>Checkout</h2>
-  <form id="checkout-form">
-    <label>Full Name <input type="text" id="fullName" required /></label>
-    <label>Address <input type="text" id="address" required /></label>
-    <label>City <input type="text" id="city" required /></label>
-    <label>Postal Code <input type="text" id="postal" required /></label>
-    <label>Country
-      <select id="country" required>
-        <option value="">Select country</option>
-        <option value="Kenya">Kenya</option>
-        <option value="Uganda">Uganda</option>
-        <option value="Tanzania">Tanzania</option>
-      </select>
-    </label>
+    <h2>Checkout</h2>
+    <form id="checkout-form">
+      <!-- Shipping fields -->
+      <label>Full Name <input type="text" id="fullName" required /></label>
+      <label>Address <input type="text" id="address" required /></label>
+      <label>City <input type="text" id="city" required /></label>
+      <label>Postal Code <input type="text" id="postal" required /></label>
+      <label>Country
+        <select id="country" required>
+          <option value="">Select country</option>
+          <option>Kenya</option>
+          <option>Uganda</option>
+          <option>Tanzania</option>
+        </select>
+      </label>
 
-    <div class="payment-methods">
-      <label><input type="radio" name="payment" value="card" required> Card</label>
-      <label><input type="radio" name="payment" value="mpesa"> M‑Pesa</label>
-    </div>
+      <!-- Pesapal payment options -->
+      <div class="payment-methods">
+        <label><input type="radio" name="payment_method" value="mpesa" checked /> Pay with M‑Pesa</label>
+        <label><input type="radio" name="payment_method" value="card" /> Pay with Bank Card</label>
+      </div>
 
-    <div class="card-fields" id="card-fields">
-      <p>Use the PayPal button below to complete your card payment.</p>
-    </div>
+      <div class="mpesa-field" id="mpesa-field">
+        <label>M‑Pesa Phone No. <input type="tel" id="mpesaPhone" pattern="\d{10}" placeholder="07XXXXXXXX" /></label>
+      </div>
 
-    <div id="paypal-button-container"></div>
+      <button type="submit" class="btn">Place Order</button>
+    </form>
+  </div>
 
-    <div class="mpesa-field" id="mpesa-field">
-      <label>M‑Pesa Phone No. <input type="tel" id="mpesaPhone" pattern="\d{10}" placeholder="07XXXXXXXX" /></label>
-    </div>
+  <script src="checkout-script.js"></script>
 
-    <button type="submit" class="btn">Place Order</button>
-  </form>
-</div>
-
+<script src="script.js"></script>
 <script>
 const API_BASE = 'https://clothing-store-demo.onrender.com';
 const cart            = JSON.parse(localStorage.getItem('cart')) || [];
@@ -259,17 +291,8 @@ row.innerHTML = `
   if (!localStorage.getItem('token')) {
   alert("Please log in to proceed to checkout.");
   window.location.href = "login.html";
-}
+}}
 //////////
-
-  /* (re)render PayPal every time total changes */
-  const sel = [...paymentRadios].find(r => r.checked)?.value;
-  if (sel === 'card') {
-    paypalBox.style.display = 'block';
-    paypalBox.innerHTML = '';                         // clear previous buttons
-    renderPayPal(totalKES / 110);                     // ⚠️ quick KES→USD demo rate
-  }
-}
 
 /* ---------- quantity change ---------- */
 window.changeQty = function (index, delta) {
@@ -286,32 +309,6 @@ window.changeQty = function (index, delta) {
   renderCart();
 };
 
-/* ---------- PayPal ---------- */
-function renderPayPal(totalUSD) {
-  paypal.Buttons({
-    style:{ shape:'rect', color:'gold', layout:'vertical' },
-    createOrder: (_, actions) =>
-      actions.order.create({ purchase_units:[{ amount:{ value:totalUSD.toFixed(2) } }] }),
-    onApprove: (_, actions) =>
-      actions.order.capture().then(det=>{
-        alert('Payment complete 🎉 id: '+det.id);
-        localStorage.removeItem('cart');
-        window.location='thank-you.html';
-      })
-  }).render('#paypal-button-container');
-}
-function togglePayPal(show) { paypalBox.style.display = show ? 'block' : 'none'; }
-
-/* ---------- payment method toggle ---------- */
-paymentRadios.forEach(r => r.addEventListener('change', () => {
-  if (r.value === 'card') {
-    mpesaField.style.display = 'none';
-    renderCart();                     // re-render to (re)show PayPal buttons
-  } else {
-    mpesaField.style.display = 'block';
-    togglePayPal(false);
-  }
-}));
 
 /* ---------- form submit (mock) ---------- */
 document.getElementById('checkout-form').addEventListener('submit', async e => {
@@ -352,15 +349,10 @@ document.getElementById('checkout-form').addEventListener('submit', async e => {
       } else {
         alert('Failed to initiate payment.');
       }
-    } catch (err) {
+ e2dfg   } catch (err) {
       alert('Error contacting payment server.');
       console.error(err);
     }
-  }
-
-  if (payment === 'card') {
-    // PayPal flow is handled by PayPal SDK
-    alert('Complete payment via PayPal button below.');
   }
 });
 

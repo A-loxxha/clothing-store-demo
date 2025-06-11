@@ -10,7 +10,7 @@ let searchForm =document.querySelector('.search-form');
 document.querySelector('#search-btn').onclick = () =>{
     searchForm.classList.toggle('active');
     navbar.classList.remove('active');
-    cartItem.classList.remove('active');
+  
 }
 
 ///////////////////
@@ -72,11 +72,6 @@ categoryOverlay.addEventListener('click', (e) => {
 });
 
 
-
-
-
-
-
 let cartItem =document.querySelector('.cart-items-container');
 
 document.querySelector('#cart-btn').onclick = () =>{
@@ -88,7 +83,7 @@ document.querySelector('#cart-btn').onclick = () =>{
 window.onscroll = () =>{
     navbar.classList.remove('active');
 }
-
+const filterButtons = document.querySelectorAll('.filters');
 filterButtons.forEach(button => {
   button.addEventListener('click', () => {
     const category = button.dataset.category;
@@ -105,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   container.innerHTML = ''; // Clear static cards
 
   try {
-    const res = await fetch('http://localhost:3000/api/products');
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/products');
     const products = await res.json();
 
     if (!res.ok) throw new Error(products.error || 'Failed to fetch');

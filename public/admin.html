@@ -33,6 +33,7 @@
     font-size: 3.5rem;
     text-align: center;
     margin-bottom: 1rem;
+    margin-top: 14rem;
     background: var(--hover-black);
     border-radius: 10px 0 30px 0px; 
   }
@@ -179,6 +180,12 @@
     opacity: 0;
   }
 
+   strong{
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1.5rem;
+    color: var(--black);
+  }
+  
 
     @media (max-width: 600px) {
   body {
@@ -275,7 +282,30 @@
 </style>
 </head>
 <body>
-  <h1 class="heading"><span>Mabel Statement</span> Admin Pannel</h1>
+  <header class="header">
+    <a href="#" class="logo">
+      <h1>Mabel Statement</h1>
+    </a>
+    <div class="icon">
+      <div class="fa fa-bars" id="menu-btn"></div>
+    </div>
+    <nav class="navbar">
+      <a href="#Overview">Overview</a>
+      <a href="#Add">Add Items</a>
+      <a href="#Products">Products</a>
+    </nav>
+    <div class="icons">
+      <div class="fa fa-search" id="search-btn"></div>
+    
+    </div>
+    <form class="search-form" id="searchForm" action="category.html" method="get">
+      <input type="text" name="search" placeholder="Search products..." required>
+      <button class="btn" type="submit">Search</button>
+    </form>
+    
+  
+  </header>
+  <h1 class="heading" id="Overview"><span>Mabel Statement</span> Admin Pannel</h1>
 
   <div id="dashboardSummary" style="display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center; flex-wrap: wrap;">
   <div style="flex: 1; min-width: 200px; background: var(--card-bg); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow); text-align: center;">
@@ -292,7 +322,9 @@
   </div>
 </div>
 
-  <h3 class="heading">Add Items </h3>
+
+  <h3 class="heading" id="Add">Add Items </h3>
+
   <form id="productForm" enctype="multipart/form-data">
     <label for="name">Product Name</label>
     <input type="text" id="name" name="name" placeholder="e.g. Sweater" required />
@@ -318,14 +350,19 @@
     <button type="submit">Save Product</button>
   </form>
 
-  <h3 class="heading">Product Inventory</h3>
+  <h3 class="heading" id="Products">Product Inventory</h3>
+   <label for="categoryFilter"><strong>Filter by Category:</strong></label>
+<select id="categoryFilter">
+  <option value="all">All</option>
+  <!-- These will be dynamically populated with actual categories -->
+</select>
   <table id="productsTable">
     <thead>
       <tr>
         <th>Image</th>
         <th>Name</th>
         <th>Price</th>
-        <th>Discount (%)</th>
+        <th>Discount (%)</th>
         <th>Stock</th>
         <th>Category</th>
         <th>Actions</th>
@@ -335,171 +372,176 @@
   </table>
   
   <script>
-    const API_BASE = 'https://clothing-store-demo.onrender.com/api/products';
-    const form = document.getElementById('productForm');
-    const tableBody = document.querySelector('#productsTable tbody');
+    window.addEventListener('DOMContentLoaded', () => {
+      const API_BASE = 'https://clothing-store-demo.onrender.com/api/products';
+      const form = document.getElementById('productForm');
+      const tableBody = document.querySelector('#productsTable tbody');
 
-    // ── Add Product (POST) ──
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
+      // ── Add Product (POST) ──
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
 
-      // 1) Clamp discount to [0, 100]
-      let disc = parseInt(formData.get('discount'), 10);
-      if (isNaN(disc) || disc < 0) disc = 0;
-      if (disc > 100) disc = 100;
-      formData.set('discount', disc);
+        let disc = parseInt(formData.get('discount'), 10);
+        if (isNaN(disc) || disc < 0) disc = 0;
+        if (disc > 100) disc = 100;
+        formData.set('discount', disc);
 
-      // 2) Append both files if they exist
-      const img1 = document.getElementById('image1');
-      const img2 = document.getElementById('image2');
-      if (img1 && img1.files[0]) {
-        formData.set('image1', img1.files[0]);
-      }
-      if (img2 && img2.files[0]) {
-        formData.set('image2', img2.files[0]);
-      }
+        const img1 = document.getElementById('image1');
+        const img2 = document.getElementById('image2');
+        if (img1 && img1.files[0]) formData.set('image1', img1.files[0]);
+        if (img2 && img2.files[0]) formData.set('image2', img2.files[0]);
 
-      // 3) POST to backend
-      try {
-        const res = await fetch(API_BASE, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to add product');
-        form.reset();
-        fetchAndRenderProducts();
-        alert('✅ Product added!');
-      } catch (err) {
-        console.error(err);
-        alert('❌ ' + err.message);
-      }
-    });
-
-    // ── Fetch & Render Products ──
-    async function fetchAndRenderProducts() {
-      tableBody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
-      try {
-        const res = await fetch(API_BASE);
-        const products = await res.json();
-        if (!Array.isArray(products) || products.length === 0) {
-          tableBody.innerHTML = '<tr><td colspan="7">No products yet.</td></tr>';
-          return;
+        try {
+          const res = await fetch(API_BASE, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Failed to add product');
+          form.reset();
+          fetchAndRenderProducts();
+          alert('✅ Product added!');
+        } catch (err) {
+          console.error(err);
+          alert('❌ ' + err.message);
         }
+      });
 
-        tableBody.innerHTML = '';
-        // ── Update dashboard summary ──
-document.getElementById('totalItems').textContent = products.length;
-
-const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
-document.getElementById('totalStock').textContent = totalStock;
-
-const offers = products.filter(p => p.discount > 0);
-document.getElementById('totalOffers').textContent = offers.length;
-////////////////////////
-
-        products.forEach(p => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>
-              <div style="position: relative; width: 80px; height: 80px;">
-                <img src="${p.imageUrl?.startsWith('/') ? p.imageUrl : '/uploads/' + p.imageUrl}" class="thumb main-img" />
-                <img src="${(p.hoverImageUrl?.startsWith('/') ? p.hoverImageUrl : '/uploads/' + p.hoverImageUrl) || (p.imageUrl?.startsWith('/') ? p.imageUrl : '/uploads/' + p.imageUrl) || ''}" class="thumb hover-img" />
-              </div>
-            </td>
-            <td><input type="text" value="${p.name || ''}" data-field="name" /></td>
-            <td><input type="number" value="${p.price?.toFixed(2) || 0}" data-field="price" step="0.01" /></td>
-            <td><input type="number" value="${p.discount || 0}" data-field="discount" min="0" max="100" /></td>
-            <td><input type="number" value="${p.stock || 0}" data-field="stock" /></td>
-            <td><input type="text" value="${p.category || ''}" data-field="category" /></td>
-            <td>
-              <button class="update-btn" data-id="${p._id}">Update</button>
-              <button class="delete-btn" data-id="${p._id}">Delete</button>
-            </td>
-          `;
-
-          // Hover CSS (inject into page once)
-          if (!document.getElementById('hover-css')) {
-            const style = document.createElement('style');
-            style.id = 'hover-css';
-            style.innerHTML = `
-              .main-img, .hover-img {
-                position: absolute;
-                top: 0; left: 0;
-                width: 80px; height: 80px;
-                object-fit: cover;
-                transition: opacity 0.3s ease;
-              }
-              .hover-img { opacity: 0; }
-              tr:hover .hover-img { opacity: 1; }
-              tr:hover .main-img { opacity: 0; }
-            `;
-            document.head.appendChild(style);
-          }
-
-          // ── Update listener ──
-          tr.querySelector('.update-btn').addEventListener('click', async () => {
-            const updatedProduct = {};
-            tr.querySelectorAll('[data-field]').forEach(input => {
-              const field = input.dataset.field;
-              if (field === 'name') {
-                updatedProduct.name = input.value.trim();
-              } else if (field === 'price') {
-                let v = parseFloat(input.value);
-                updatedProduct.price = isNaN(v) ? 0 : v;
-              } else if (field === 'discount') {
-                let v = parseInt(input.value, 10);
-                if (isNaN(v) || v < 0) v = 0;
-                if (v > 100) v = 100;
-                updatedProduct.discount = v;
-              } else if (field === 'stock') {
-                let v = parseInt(input.value, 10);
-                updatedProduct.stock = isNaN(v) ? 0 : v;
-              } else if (field === 'category') {
-                updatedProduct.category = input.value.trim();
-              }
-            });
-            updatedProduct.isOffer = (updatedProduct.discount > 0);
-
-            try {
-              const res = await fetch(`${API_BASE}/${p._id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedProduct)
-              });
-              if (!res.ok) throw new Error('Update failed');
-              fetchAndRenderProducts();
-              alert('✅ Product updated!');
-            } catch (err) {
-              console.error(err);
-              alert('❌ ' + err.message);
-            }
-          });
-
-          // ── Delete listener ──
-          tr.querySelector('.delete-btn').addEventListener('click', async () => {
-            if (!confirm('Delete this product?')) return;
-            try {
-              await fetch(`${API_BASE}/${p._id}`, { method: 'DELETE' });
-              fetchAndRenderProducts();
-              alert('🗑️ Product deleted');
-            } catch (err) {
-              console.error(err);
-              alert('❌ ' + err.message);
-            }
-          });
-
-          tableBody.appendChild(tr);
-        });
-      } catch (err) {
-        console.error(err);
-        tableBody.innerHTML = '<tr><td colspan="7">Error loading products.</td></tr>';
-      }
+      // ── Fetch & Render Products ──
+      async function fetchAndRenderProducts() {
+  tableBody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
+  try {
+    const res = await fetch(API_BASE);
+    const products = await res.json();
+    if (!Array.isArray(products) || products.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="7">No products yet.</td></tr>';
+      return;
     }
 
-    // ── Initial load ──
-    fetchAndRenderProducts();
+    // Update summary counts
+    const totalItemsEl = document.getElementById('totalItems');
+if (totalItemsEl) totalItemsEl.textContent = products.length;
+
+const totalStockEl = document.getElementById('totalStock');
+if (totalStockEl) totalStockEl.textContent = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+
+const totalOffersEl = document.getElementById('totalOffers');
+if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount > 0).length;
+
+
+    // Collect unique categories
+    const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+
+    // Populate filter dropdown if it's empty
+    const filterSelect = document.getElementById('categoryFilter');
+    if (filterSelect && filterSelect.options.length <= 1) {
+      categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        filterSelect.appendChild(opt);
+      });
+    }
+
+    // Get current selected filter
+    const selectedCategory = filterSelect?.value || 'all';
+
+    tableBody.innerHTML = '';
+    products.forEach(p => {
+      if (selectedCategory !== 'all' && p.category !== selectedCategory) return;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div style="position: relative; width: 80px; height: 80px;">
+            <img src="${p.imageUrl}" class="thumb main-img" />
+            <img src="${p.hoverImageUrl || p.imageUrl}" class="thumb hover-img" />
+          </div>
+        </td>
+        <td><input type="text" value="${p.name || ''}" data-field="name" /></td>
+        <td><input type="number" value="${p.price?.toFixed(2) || 0}" data-field="price" step="0.01" /></td>
+        <td><input type="number" value="${p.discount || 0}" data-field="discount" min="0" max="100" /></td>
+        <td><input type="number" value="${p.stock || 0}" data-field="stock" /></td>
+        <td><input type="text" value="${p.category || ''}" data-field="category" /></td>
+        <td>
+          <button class="update-btn" data-id="${p._id}">Update</button>
+          <button class="delete-btn" data-id="${p._id}">Delete</button>
+        </td>
+      `;
+
+      // Add hover effect styles once
+      if (!document.getElementById('hover-css')) {
+        const style = document.createElement('style');
+        style.id = 'hover-css';
+        style.innerHTML = `
+          .main-img, .hover-img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 80px; height: 80px;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+          }
+          .hover-img { opacity: 0; }
+          tr:hover .hover-img { opacity: 1; }
+          tr:hover .main-img { opacity: 0; }
+        `;
+        document.head.appendChild(style);
+      }
+
+      // Update button
+      tr.querySelector('.update-btn').addEventListener('click', async () => {
+        const updatedProduct = {};
+        tr.querySelectorAll('[data-field]').forEach(input => {
+          const field = input.dataset.field;
+          const val = input.value.trim();
+          if (field === 'price') updatedProduct.price = parseFloat(val) || 0;
+          else if (field === 'discount') updatedProduct.discount = Math.min(100, Math.max(0, parseInt(val) || 0));
+          else if (field === 'stock') updatedProduct.stock = parseInt(val) || 0;
+          else updatedProduct[field] = val;
+        });
+        updatedProduct.isOffer = updatedProduct.discount > 0;
+        try {
+          const res = await fetch(`${API_BASE}/${p._id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedProduct)
+          });
+          if (!res.ok) throw new Error('Update failed');
+          fetchAndRenderProducts();
+          alert('✅ Product updated!');
+        } catch (err) {
+          console.error(err);
+          alert('❌ ' + err.message);
+        }
+      });
+
+      // Delete button
+      tr.querySelector('.delete-btn').addEventListener('click', async () => {
+        if (!confirm('Delete this product?')) return;
+        try {
+          await fetch(`${API_BASE}/${p._id}`, { method: 'DELETE' });
+          fetchAndRenderProducts();
+          alert('🗑️ Product deleted');
+        } catch (err) {
+          console.error(err);
+          alert('❌ ' + err.message);
+        }
+      });
+
+      tableBody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+    tableBody.innerHTML = '<tr><td colspan="7">Error loading products.</td></tr>';
+  }
+}
+document.getElementById('categoryFilter')?.addEventListener('change', fetchAndRenderProducts);
+
+      // ── Initial Load ──
+      fetchAndRenderProducts();
+    });
   </script>
+  <script src="script.js"></script>
 </body>
 </html>

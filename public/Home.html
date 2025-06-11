@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mabel Statement | Browse</title>
   <link rel="stylesheet" href="Styles.css" />
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
     .cart-badge {
       background: red;
@@ -94,20 +95,25 @@
       <a href="#offers">What's New</a>
       <a href="#browse">Browse</a>
       <a href="#about">Visit Us</a>
-      <div class="category-toggle">Categories ▸</div>
+      <a class="category-toggle">Categories ▸</a>
+      <a id="logoutBtn" >Logout</a>
+
       <div id="categoryOverlay" class="category-overlay">
         <div class="category-sidebar">
           <div class="close-category">&times;</div>
           <h3>Categories</h3>
           <a href="category.html">All Products</a>
-          <a href="category.html?cat=Dresses">Dresses</a>
-          <a href="category.html?cat=Tops">Tops</a>
-          <a href="category.html?cat=Mini_Dresses">Mini-Dresses</a>
-          <a href="category.html?cat=Accessories">Accessories</a>
+          <a href="category.html?cat=Mini_Dress">Mini-Dresses</a>
+          <a href="category.html?cat=Midi_Dress">Midi-Dresses</a>
+          <a href="category.html?cat=Maxi_Dress">Maxi-Dresses</a>
+          <a href="category.html?cat=Perfume">Perfumes</a>
+          <a href="category.html?cat=Accessory">Accessories</a>
         </div>
     </nav>
     <div class="icons">
       <div class="fa fa-search" id="search-btn"></div>
+      <a href="login.html"><div class="fa fa-user" aria-hidden="true"></div></a>
+      
       <a href="checkout.html">
         <div class="fa fa-shopping-bag" id="cart-btn" style="position: relative;">
           <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
@@ -118,6 +124,9 @@
       <input type="text" name="search" placeholder="Search products..." required>
       <button class="btn" type="submit">Search</button>
     </form>
+    
+    <p id="welcomeUser" style="font-size: 2rem; color: var(--main-color); position: fixed; top: 20px; left: 20px;">Welcome, Guest</p>
+    
   </header>
 
   <div id="toast-container" class="toast-container"></div>
@@ -149,20 +158,22 @@
   <section class="about" id="about">
     <h1 class="heading"><span>Visit</span> us</h1>
     <div class="row">
-      <div class="image"><img src="assets/images/fashion-6066661_1920.jpg" alt=""></div>
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8181058834393!2d36.82310503291125!3d-1.282970609935422!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f11004419bdf3%3A0xebb9ba3c4a0707f9!2sSawa%20mall!5e0!3m2!1sen!2ske!4v1749663098801!5m2!1sen!2ske" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       <div class="content">
         <h3>Our Store</h3>
-        <p class="fa fa-map-marker"> Visit us At Sawa mall</p>
+        <p class="fa fa-map-marker"> location</p>
+        <p>Visit us At Sawa mall</p>
         <p> Store Number m26</p>
         <h3>Contact us</h3>
-        <p class="fab fa-whatsapp"> +254 748 398646</p>
+        <p class="fab fa-whatsapp"> whatsapp</p> 
+          <p>+254 748 398646</p>
       </div>
     </div>
   </section>
 
   <section class="footer">
     <div class="share">
-      <a href="#" class="fa-brands fa-tiktok"></i>
+      <a href="#" class="fa-brands fa-tiktok"></a>
       <a href="#" class="fab fa-instagram"></a>
       </div>
     <div class="links">
@@ -187,6 +198,35 @@
   const offerChk   = document.getElementById('offerOnly');
   const applyBtn   = document.getElementById('applyFilters');
 
+  // Close modal when X is clicked
+document.querySelector('.close').addEventListener('click', () => {
+  document.getElementById('productModal').style.display = 'none';
+});
+
+// Close modal when clicking outside the modal content
+window.addEventListener('click', (e) => {
+  const modal = document.getElementById('productModal');
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+      
+/////////Show_Guest
+
+  const user = JSON.parse(localStorage.getItem('user'));
+
+      
+  // Show welcome message
+  document.getElementById('welcomeUser').textContent = `Welcome, ${user.name}`;
+
+  // Logout functionality
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+  });
+
+      
   // ----------------------------------
   // 1️⃣   Fetch *once* — hold in memory
   // ----------------------------------
@@ -264,19 +304,19 @@
       function makeCard(p) {
   const card = document.createElement('div');
   card.className = 'card';
+  card.style.cursor = 'pointer';
 
- const baseURL = 'https://clothing-store-demo.onrender.com';
+  const baseURL = 'https://clothing-store-demo.onrender.com';
 
-const mainImg = p.imageUrl.startsWith('http') 
-  ? p.imageUrl.replace('http://', 'https://') 
-  : `${baseURL}${p.imageUrl}`;
+  const mainImg = p.imageUrl.startsWith('http')
+    ? p.imageUrl.replace('http://', 'https://')
+    : `${baseURL}${p.imageUrl}`;
 
-const hoverImg = p.hoverImageUrl
-  ? (p.hoverImageUrl.startsWith('http')
-      ? p.hoverImageUrl.replace('http://', 'https://')
-      : `${baseURL}${p.hoverImageUrl}`)
-  : mainImg;
-
+  const hoverImg = p.hoverImageUrl
+    ? (p.hoverImageUrl.startsWith('http')
+        ? p.hoverImageUrl.replace('http://', 'https://')
+        : `${baseURL}${p.hoverImageUrl}`)
+    : mainImg;
 
   const isOffer = p.isOffer && Number(p.discount) > 0;
   const discount = Number(p.discount) || 0;
@@ -284,35 +324,52 @@ const hoverImg = p.hoverImageUrl
   const priceNew = (priceOld * (100 - discount) / 100).toFixed(2);
 
   card.innerHTML = `
-  <div class="img-wrapper-container" style="position:relative">
-    ${isOffer ? `
-      <span class="discount-badge">-${discount}%</span>
-    ` : ''}
-    <div class="img-wrapper">
-      <img src="${mainImg}" alt="${p.name}" class="main">
-      <img src="${hoverImg}" alt="${p.name}" class="hover">
+    <div class="img-wrapper-container" style="position:relative">
+      ${isOffer ? `<span class="discount-badge">-${discount}%</span>` : ''}
+      <div class="img-wrapper">
+        <img src="${mainImg}" alt="${p.name}" class="main">
+        <img src="${hoverImg}" alt="${p.name}" class="hover">
+      </div>
     </div>
-  </div>
-  <h3>${p.name}</h3>
-  ${isOffer
-    ? `<p>
-         <span style="text-decoration:line-through;color:#888;">
-           KES ${priceOld.toLocaleString()}
-         </span><br>
-         <strong style="color:#ce8e1a;">KES ${priceNew}</strong>
-       </p>`
-    : `<p>KES ${priceOld.toLocaleString()}</p>` }
-  <small>In stock: ${p.stock}</small>
-  <button class="add-to-cart-btn"
-          data-id="${p._id}"
-          data-name="${p.name}"
-          data-price="${isOffer ? priceNew : priceOld}"
-          data-stock="${p.stock}"
-          data-img="${mainImg}">
-    Add to Cart
-  </button>
-
+    <h3>${p.name}</h3>
+    ${isOffer
+      ? `<p>
+          <span style="text-decoration:line-through;color:#888;">
+            KES ${priceOld.toLocaleString()}
+          </span><br>
+          <strong style="color:#ce8e1a;">KES ${priceNew}</strong>
+        </p>`
+      : `<p>KES ${priceOld.toLocaleString()}</p>` }
+    <small>In stock: ${p.stock}</small>
+    <button class="add-to-cart-btn"
+            data-id="${p._id}"
+            data-name="${p.name}"
+            data-price="${isOffer ? priceNew : priceOld}"
+            data-stock="${p.stock}"
+            data-img="${mainImg}">
+      Add to Cart
+    </button>
   `;
+
+  // ✨ Add modal open functionality
+  card.addEventListener('click', (e) => {
+    // Prevent opening modal when clicking "Add to Cart"
+    if (e.target.classList.contains('add-to-cart-btn')) return;
+
+    const modal = document.getElementById('productModal');
+    const body = document.getElementById('modal-body');
+    modal.style.display = 'block';
+    body.innerHTML = `
+      <h2>${p.name}</h2>
+      <img src="${mainImg}" alt="${p.name}" style="width:100%;border-radius:10px;max-height:300px;object-fit:cover;margin-bottom:1rem;">
+      <p><strong>Price:</strong> ${isOffer
+        ? `KES <del>${priceOld}</del> <span style="color:#ce8e1a;">KES ${priceNew}</span>`
+        : `KES ${priceOld}`}</p>
+      <p><strong>Category:</strong> ${p.category}</p>
+      <p><strong>In stock:</strong> ${p.stock}</p>
+      ${p.description ? `<p>${p.description}</p>` : ''}
+    `;
+  });
 
   return card;
 }
@@ -361,6 +418,12 @@ const hoverImg = p.hoverImageUrl
         }
       }
 
+      // Check login on page load
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+
       function showToast(msg) {
         const toast = document.createElement('div');
         toast.className = 'toast';
@@ -372,5 +435,13 @@ const hoverImg = p.hoverImageUrl
   </script>
   
   <script src="script.js"></script>
+  <div id="productModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="modal-body">Loading...</div>
+      <button class="btn"> Add to Cart</button>
+          
+  </div>
+</div>
 </body>
 </html>
