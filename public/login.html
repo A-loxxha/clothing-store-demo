@@ -152,10 +152,14 @@
     
     const data = await res.json();
     if (res.ok && data.token) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      window.location.href = 'Home.html'; // or wherever you redirect after login
-    } else {
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('user', JSON.stringify(data.user));
+
+  const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
+  localStorage.removeItem('redirectAfterLogin');
+  window.location.href = redirectTo;
+}
+    else {
       document.getElementById('authMessage').textContent = data.message || 'Login failed';
     }
   });
