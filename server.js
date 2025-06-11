@@ -6,6 +6,7 @@ const cors     = require('cors');
 const path     = require('path');
 const { initiatePayment } = require('./pesapal');
 
+
 // ── Routes ──
 const productRoutes = require('./routes/products');
 const userRoutes    = require('./routes/userRoutes'); // 👈 Added user auth routes
@@ -17,6 +18,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json()); // for JSON bodies
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // ── API Routes ──
 app.use('/api/products', productRoutes);
