@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Checkout</title>
+  <script>
+  const token = localStorage.getItem('token');
+  if (!token) {
+    localStorage.setItem('redirectAfterLogin', 'checkout.html');
+    window.location.href = 'login.html';
+  }
+</script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="Styles.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
@@ -231,12 +239,6 @@
 <script src="script.js"></script>
 <script>
 
-const token = localStorage.getItem('token');
-  if (!token) {
-    localStorage.setItem('redirectAfterLogin', 'checkout.html');
-    window.location.href = 'login.html';
-  }
-
 
 const API_BASE = 'https://clothing-store-demo.onrender.com';
 const cart            = JSON.parse(localStorage.getItem('cart')) || [];
@@ -295,11 +297,6 @@ row.innerHTML = `
 
   totalDisplay.textContent = `Total: KES ${totalKES.toLocaleString()}`;
   
-  ///////tell users to login
-  if (!localStorage.getItem('token')) {
-  alert("Please log in to proceed to checkout.");
-  window.location.href = "login.html";
-}}
 //////////
 
 /* ---------- quantity change ---------- */
@@ -343,7 +340,7 @@ document.getElementById('checkout-form').addEventListener('submit', async e => {
 
 
     try {
-      const res = await fetch('https://localhost:3000/api/stk', {
+      const res = await fetch('https://clothing-store-demo.onrender.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, amount: totalKES })
@@ -357,7 +354,7 @@ document.getElementById('checkout-form').addEventListener('submit', async e => {
       } else {
         alert('Failed to initiate payment.');
       }
- e2dfg   } catch (err) {
+   } catch (err) {
       alert('Error contacting payment server.');
       console.error(err);
     }
