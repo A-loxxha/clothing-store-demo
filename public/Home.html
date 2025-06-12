@@ -184,8 +184,15 @@
   </section>
 
   <script type="module">
-    document.addEventListener('DOMContentLoaded', () => {
-  const API = 'https://clothing-store-demo.onrender.com/api/products';
+  document.addEventListener('DOMContentLoaded', () => {
+    // ✅ Check login on page load FIRST
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+      return; // stop further script execution
+    }
+
+    const API = 'https://clothing-store-demo.onrender.com/api/products';
 
   // DOM refs
   const offersDiv  = document.getElementById('offers');
@@ -445,11 +452,7 @@ if (user) {
         }
       }
 
-      // Check login on page load
-  const token = localStorage.getItem('token');
-  if (!token) {
-    window.location.href = 'login.html';
-  }
+      
 
       function showToast(msg) {
         const toast = document.createElement('div');
