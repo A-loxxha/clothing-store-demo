@@ -1,7 +1,7 @@
 // global.js
 export function updateCartBadge() {
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  const totalQty = cart.reduce((sum, item) => sum + (item.quantity || item.qty || 0), 0);
+  const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
   const badge = document.getElementById('cart-badge');
   if (badge) {
     if (totalQty > 0) {
