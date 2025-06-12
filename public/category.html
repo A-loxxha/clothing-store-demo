@@ -235,21 +235,19 @@
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         const index = cart.findIndex(item => item.id === id);
 
-        if (item) {
-              if (item.quantity < stock) {
-                item.quantity++;
-                showToast(`Added another "${name}"`);
-              } else {
-                showToast(`Only ${stock} left in stock.`);
-                return;
-              }
-            } else {
-              cart.push({ id, name, price, stock, quantity: 1, img });
-              showToast(`Added "${name}" to cart`);
-            }
+        if (index > -1) {
+          if (cart[index].quantity < stock) {
+            cart[index].quantity += 1;
+          } else {
+            alert('Maximum stock reached.');
+          }
+        } else {
+          cart.push({ id, name, price, stock, quantity: 1, img });
+          showToast(`Added "${name}" to cart`);
+        }
 
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartBadge();
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartBadge(); // ✅ Refresh badge count
       });
 
       // ✨ Add modal open functionality
