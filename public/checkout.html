@@ -3,14 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Checkout</title>
-  <script>
-  const token = localStorage.getItem('token');
-  if (!token) {
-    localStorage.setItem('redirectAfterLogin', 'checkout.html');
-    window.location.href = 'login.html';
-  }
-</script>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="Styles.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
@@ -197,9 +189,10 @@
 
 <!-- Cart Items -->
 <div class="cart-items" id="cart-items">
-  <h3>Your Cart</h3>
-  <p id="empty-msg">Your cart is empty.</p>
-  <p class="checkout-summary" id="total-amount">Total: KES 0</p>
+  <h2 id="welcomeUser">Welcome</h2>
+<h3>Your Cart:</h3>
+<div id="cart-items-container">Loading cart...</div>
+
 </div>
 
 <!-- Checkout Form -->
@@ -238,6 +231,12 @@
 
 <script src="script.js"></script>
 <script>
+  
+  const token = localStorage.getItem('token');
+  if (!token) {
+    localStorage.setItem('redirectAfterLogin', 'checkout.html');
+    window.location.href = 'login.html';
+  }
 
 
 const API_BASE = 'https://clothing-store-demo.onrender.com';
@@ -258,45 +257,40 @@ async function fetchStock() {
 
 
 /* ---------- cart render ---------- */
-function renderCart() {
-  cartBox.querySelectorAll('.cart-item').forEach(el => el.remove());
+// ✅ Load cart and display items
+  document.addEventListener('DOMContentLoaded', () => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const container = document.getElementById('cart-items-container');
 
-  let totalKES = 0;
-  if (!cart.length) {
-    document.getElementById('empty-msg').style.display = 'block';
-    totalDisplay.textContent = 'Total: KES 0';
-    togglePayPal(false);
-    return;
-  }}
-  document.getElementById('empty-msg').style.display = 'none';
+    if (cart.length === 0) {
+      container.innerHTML = '<p>Your cart is empty.</p>';
+      return;
+    }
 
-  cart.forEach((item, i) => {
-    const max = productStock[item.id] ?? Infinity;
-    item.quantity = Math.min(item.quantity, max);            // auto-shrink if stock fell
+    container.innerHTML = '';
+    let total = 0;
 
-    totalKES += item.price * item.quantity;
+    cart.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      total += itemTotal;
 
-    const row = document.createElement('div');
-row.className = 'cart-item';
-row.innerHTML = `
-  <img src="${API_BASE}/uploads/${item.img || 'placeholder.jpg'}" alt="${item.name}" onerror="this.src='placeholder.jpg'">
-  <div class="cart-details">
-    <strong>${item.name}</strong><br>
-    KES ${item.price} ×
-    <div class="controls">
-      <button onclick="changeQty(${i},-1)">−</button>
-      <span>${item.quantity}</span>
-      <button onclick="changeQty(${i},1)" ${item.quantity >= max ? 'disabled' : ''}>+</button>
-    </div>
-    Subtotal: KES ${(item.price * item.quantity).toLocaleString()}
-  </div>`;
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" width="80" height="80">
+        <div>
+          <strong>${item.name}</strong><br>
+          Quantity: ${item.quantity}<br>
+          Price: KES ${itemTotal.toFixed(2)}
+        </div>
+      `;
+      container.appendChild(div);
+    });
 
-
-    totalDisplay.insertAdjacentElement('beforebegin', row);
+    const totalEl = document.createElement('h3');
+    totalEl.innerHTML = `Total: KES ${total.toFixed(2)}`;
+    container.appendChild(totalEl);
   });
-
-  totalDisplay.textContent = `Total: KES ${totalKES.toLocaleString()}`;
-  
 //////////
 
 /* ---------- quantity change ---------- */
