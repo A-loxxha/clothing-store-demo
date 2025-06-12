@@ -242,7 +242,8 @@
             alert('Maximum stock reached.');
           }
         } else {
-          cart.push({ id, name, price, stock, quantity: 1, img });
+          cart.push({ id, name, price, img, stock, quantity: 1 });
+
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
@@ -276,7 +277,7 @@
   });
 
 </script>
-
+<script src="global.js"></script>
 <script src="script.js"></script>
 <div id="productModal" class="modal">
   <div class="modal-content">
