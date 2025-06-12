@@ -230,18 +230,19 @@
   renderCart();
 }
 
-function changeQuantity(index, delta) {
+window.changeQuantity = function(index, delta) {
   const item = cart[index];
-  const maxQty = item.stock || 1; // fallback if no stock data
+  const maxQty = item.stock || 1;
 
   item.quantity = Math.min(Math.max(1, item.quantity + delta), maxQty);
   updateCartStorage();
-}
+};
 
-function removeItem(index) {
+window.removeItem = function(index) {
   cart.splice(index, 1);
   updateCartStorage();
-}
+};
+
 
 function renderCart() {
   const container = document.getElementById('cart-items-container');
