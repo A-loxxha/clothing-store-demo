@@ -214,10 +214,12 @@ window.addEventListener('click', (e) => {
 /////////Show_Guest
 
   const user = JSON.parse(localStorage.getItem('user'));
-
-      
-  // Show welcome message
+if (user) {
   document.getElementById('welcomeUser').textContent = `Welcome, ${user.name}`;
+} else {
+  window.location.href = 'login.html';
+}
+
 
   // Logout functionality
   document.getElementById('logoutBtn').addEventListener('click', () => {
