@@ -436,20 +436,7 @@ if (user) {
             updateCartBadge();
           });
         });
-      }
-
-      function updateCartBadge() {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
-        if (totalQty > 0) {
-          cartBadge.style.display = 'inline-block';
-          cartBadge.textContent = totalQty;
-        } else {
-          cartBadge.style.display = 'none';
-        }
-      }
-
-      
+      }    
 
       function showToast(msg) {
         const toast = document.createElement('div');
