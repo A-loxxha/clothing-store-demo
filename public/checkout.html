@@ -104,6 +104,46 @@
       font-size: 1.2rem;
       margin-top: 10px;
     }
+    .quantity-controls button {
+  background: var(--main-color);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.quantity-controls button:hover {
+  background: var(--hover-black);
+  color: var(--main-color);
+}
+
+.quantity-controls span {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 0 10px;
+  display: inline-block;
+  min-width: 24px;
+  text-align: center;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  font-size: 0.95rem;
+  margin-top: 6px;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.remove-btn:hover {
+  color: #d11a2a;
+}
+
   </style>
 </head>
 <body>
@@ -181,66 +221,64 @@
       });
     });
 
-    function renderCart() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
   function updateCartStorage() {
-    localStorage.setItem('cart', JSON.stringify(cart));
-    renderCart();
-  }
-
-  function changeQuantity(index, delta) {
-    const item = cart[index];
-    const maxQty = item.inStock || 10; // fallback to 10 if no stock field
-
-    item.quantity = Math.min(Math.max(1, item.quantity + delta), maxQty);
-    updateCartStorage();
-  }
-
-  function removeItem(index) {
-    cart.splice(index, 1);
-    updateCartStorage();
-  }
-
-  function renderCart() {
-    const container = document.getElementById('cart-items-container');
-    container.innerHTML = '';
-
-    if (cart.length === 0) {
-      container.innerHTML = '<p>Your cart is empty.</p>';
-      return;
-    }
-
-    let total = 0;
-    cart.forEach((item, i) => {
-      total += item.price * item.quantity;
-
-      const div = document.createElement('div');
-      div.className = 'cart-item';
-      div.innerHTML = `
-        <img src="${item.img}" alt="${item.name}" />
-        <div style="flex: 1">
-          <strong>${item.name}</strong><br/>
-          Price: KES ${item.price} <br/>
-          Quantity:
-          <button onclick="changeQuantity(${i}, -1)">−</button>
-          <span style="margin: 0 8px;">${item.quantity}</span>
-          <button onclick="changeQuantity(${i}, 1)">+</button>
-          <br/>
-          <button onclick="removeItem(${i})" style="color: red; font-size: 0.9rem; margin-top: 5px;">Remove</button>
-        </div>
-      `;
-      container.appendChild(div);
-    });
-
-    const totalDiv = document.createElement('div');
-    totalDiv.className = 'cart-total';
-    totalDiv.textContent = `Total: KES ${total.toFixed(2)}`;
-    container.appendChild(totalDiv);
-  }
-
+  localStorage.setItem('cart', JSON.stringify(cart));
   renderCart();
 }
+
+function changeQuantity(index, delta) {
+  const item = cart[index];
+  const maxQty = item.inStock || 10; // fallback if no stock data
+
+  item.quantity = Math.min(Math.max(1, item.quantity + delta), maxQty);
+  updateCartStorage();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateCartStorage();
+}
+
+function renderCart() {
+  const container = document.getElementById('cart-items-container');
+  container.innerHTML = '';
+
+  if (cart.length === 0) {
+    container.innerHTML = '<p>Your cart is empty.</p>';
+    return;
+  }
+
+  let total = 0;
+  cart.forEach((item, i) => {
+    total += item.price * item.quantity;
+
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+  <img src="${item.img}" alt="${item.name}" />
+  <div style="flex: 1">
+    <strong>${item.name}</strong><br/>
+    Price: KES ${item.price.toLocaleString()} <br/>
+    <div class="quantity-controls">
+      <button onclick="changeQuantity(${i}, -1)">−</button>
+      <span>${item.quantity}</span>
+      <button onclick="changeQuantity(${i}, 1)">+</button>
+    </div>
+    <button onclick="removeItem(${i})" class="remove-btn">Remove</button>
+  </div>
+`;
+
+    container.appendChild(div);
+  });
+
+  const totalDiv = document.createElement('div');
+  totalDiv.className = 'cart-total';
+  totalDiv.textContent = `Total: KES ${total.toFixed(2)}`;
+  container.appendChild(totalDiv);
+}
+
+// Initial render
+renderCart();
 
 
     document.getElementById('checkout-form').addEventListener('submit', async e => {
