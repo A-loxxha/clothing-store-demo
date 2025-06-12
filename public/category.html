@@ -243,7 +243,6 @@
           }
         } else {
           cart.push({ id, name, price, stock, quantity: 1, img });
-          showToast(`Added "${name}" to cart`);
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
