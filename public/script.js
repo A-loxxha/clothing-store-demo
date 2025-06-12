@@ -131,6 +131,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+export function updateCartBadge() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const totalQty = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+  const badge = document.getElementById('cart-badge');
+  if (badge) {
+    if (totalQty > 0) {
+      badge.textContent = totalQty;
+      badge.style.display = 'inline';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+}
+
+
 /**handle add to cart*/
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize cart from localStorage
