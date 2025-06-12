@@ -11,6 +11,7 @@ const { initiatePayment } = require('./pesapal');
 const productRoutes = require('./routes/products');
 const userRoutes    = require('./routes/userRoutes'); // 👈 Added user auth routes
 const checkoutRoutes = require('./routes/checkout'); //
+console.log('checkoutRoutes loaded:', typeof checkoutRoutes); // should be 'function'
 
 const app = express();
 const PORT = process.env.PORT || 3000;

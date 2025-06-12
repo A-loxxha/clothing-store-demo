@@ -1,4 +1,4 @@
-const Order = require('../models/Order');
+const Order = require('../models/order');
 // const pesapal = require('../utils/pesapal'); // optionally import Pesapal SDK here
 
 exports.handleCheckout = async (req, res) => {
