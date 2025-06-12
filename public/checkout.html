@@ -203,6 +203,10 @@
   </div>
 
   <script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+      
+
     const API_BASE = 'https://clothing-store-demo.onrender.com';
     const token = localStorage.getItem('token');
 
@@ -347,6 +351,7 @@ renderCart();
           console.error(err);
         }
       }
+    });
     });
 
     renderCart();
