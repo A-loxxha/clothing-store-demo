@@ -987,6 +987,23 @@ body{
   font-weight: bold;
 }
 
+.modal .add-to-cart-btn{
+    text-align: center;
+    margin-top: 1rem;
+    display: inline-block;
+    padding: 10px 5px;
+    font-size: 1.7rem;
+    color: #fff;
+    background: var(--main-color);
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.modal .add-to-cart-btn:hover{
+    background: #0000007a;
+    border-radius: 10px 0 30px 0px 
+}
+
 .close {
   position: absolute;
   top: 15px;
@@ -1196,6 +1213,10 @@ body{
         }
 
         .card .add-to-cart-btn{
+            background: #0000007a;
+            border-radius: 10px 0 30px 0px 
+    }
+        .modal .add-to-cart-btn{
             background: #0000007a;
             border-radius: 10px 0 30px 0px 
     }
