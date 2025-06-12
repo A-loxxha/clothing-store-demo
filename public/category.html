@@ -241,7 +241,7 @@
         const img = button.dataset.img;
 
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const index = cart.findIndex(item => item.id === id);
+        const item = cart.findIndex(item => item.id === id);
 
         if (item) {
               if (item.quantity < stock) {
