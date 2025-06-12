@@ -228,7 +228,7 @@
 
 function changeQuantity(index, delta) {
   const item = cart[index];
-  const maxQty = item.inStock || 10; // fallback if no stock data
+  const maxQty = item.stock || 1; // fallback if no stock data
 
   item.quantity = Math.min(Math.max(1, item.quantity + delta), maxQty);
   updateCartStorage();
