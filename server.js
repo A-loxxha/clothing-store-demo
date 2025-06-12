@@ -10,6 +10,7 @@ const { initiatePayment } = require('./pesapal');
 // ── Routes ──
 const productRoutes = require('./routes/products');
 const userRoutes    = require('./routes/userRoutes'); // 👈 Added user auth routes
+const checkoutRoutes = require('./routes/checkout'); //
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ── API Routes ──
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes); // 👈 Add user routes under /api/users
+app.use('/api/checkout', checkoutRoutes); // 👈 Add this below other app.use()
+
 app.post('/api/pay', async (req, res) => {
   const { name, email, phone, amount, paymentMethod } = req.body;
 
