@@ -236,13 +236,13 @@
         const index = cart.findIndex(item => item.id === id);
 
         if (index > -1) {
-          if (cart[index].qty < stock) {
-            cart[index].qty += 1;
+          if (cart[index].quantity < stock) {
+            cart[index].quantity += 1;
           } else {
             alert('Maximum stock reached.');
           }
         } else {
-          cart.push({ id, name, price, img, qty: 1 });
+          cart.push({ id, name, price, img, quantity: 1 });
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
