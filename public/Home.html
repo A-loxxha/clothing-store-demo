@@ -185,12 +185,7 @@
 
   <script type="module">
   document.addEventListener('DOMContentLoaded', () => {
-    // ✅ Check login on page load FIRST
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = 'login.html';
-      return; // stop further script execution
-    }
+  
 
     const API = 'https://clothing-store-demo.onrender.com/api/products';
 

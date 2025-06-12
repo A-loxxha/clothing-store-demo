@@ -103,9 +103,9 @@
   </div>
 <script>
    const token = localStorage.getItem('token');
-  if (token) {
-    window.location.href = 'Home.html';
-  }
+  const user = localStorage.getItem('user');
+
+
   const API_URL = 'https://clothing-store-demo.onrender.com'; // change if hosted elsewhere
 
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
