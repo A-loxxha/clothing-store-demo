@@ -184,6 +184,8 @@
   </section>
 
   <script type="module">
+    import { updateCartBadge, setupModalCloseListeners } from './global.js';
+
   document.addEventListener('DOMContentLoaded', () => {
   
 
@@ -456,6 +458,10 @@ if (user) {
         document.getElementById('toast-container').appendChild(toast);
         setTimeout(() => toast.remove(), 4000);
       }
+
+      setupModalCloseListeners();
+      updateCartBadge();
+
     });
   </script>
   

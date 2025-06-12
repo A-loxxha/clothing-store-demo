@@ -110,7 +110,8 @@
 </section>
   
   <script type="module">
-    
+    import { updateCartBadge, setupModalCloseListeners } from './global.js';
+
   document.addEventListener('DOMContentLoaded', async () => {
     const API = 'https://clothing-store-demo.onrender.com/api/products';
 
@@ -269,6 +270,9 @@
 
       return card;
     }
+    setupModalCloseListeners();
+    updateCartBadge();
+
   });
 
   // ✅ Globally accessible badge updater
