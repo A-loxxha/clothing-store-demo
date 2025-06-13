@@ -27,11 +27,12 @@ router.post('/mpesa', async (req, res) => {
     };
 
     const response = await initiatePayment(order);
+    console.log('Pesapal card payment response:', response);
     res.json({ success: true, ...response });
   } catch (err) {
-    console.error('PESAPAL ERROR:', err.response?.data || err.message);
-    res.status(500).json({ success: false, message: 'Failed to initiate M-Pesa payment' });
-  }
+  console.error('PESAPAL CARD ERROR:', err.response?.data || err.message);
+  res.status(500).json({ success: false, message: 'Failed to initiate card payment' });
+}
 });
 
 // CARD Route — fix route name to match frontend
