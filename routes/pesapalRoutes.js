@@ -29,7 +29,8 @@ router.post('/mpesa', async (req, res) => {
     const response = await initiatePayment(order);
     res.json({ success: true, ...response });
   } catch (err) {
-    console.error(err);
+    console.error('PESAPAL ERROR:', err.response?.data || err.message, err.stack);
+
     res.status(500).json({ success: false, message: 'Failed to initiate M-Pesa payment' });
   }
 });
