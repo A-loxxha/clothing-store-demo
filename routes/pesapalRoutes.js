@@ -27,6 +27,7 @@ router.post('/mpesa', async (req, res) => {
     };
 
     console.log('Sending amount:', order.amount, 'Type:', typeof order.amount);
+    console.log('Using notification_id:', process.env.PESAPAL_NOTIFICATION_ID);
 
     const response = await initiatePayment(order);
     console.log('Pesapal card payment response:', response);
