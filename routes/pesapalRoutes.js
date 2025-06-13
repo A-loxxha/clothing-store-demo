@@ -12,7 +12,7 @@ router.post('/mpesa', async (req, res) => {
     const order = {
       id: `ORDER-${Date.now()}`,
       currency: 'KES',
-      amount,
+      amount: parseFloat(amount).toFixed(2),
       description: 'Clothing Store Order',
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
@@ -44,7 +44,7 @@ router.post('/initiate', async (req, res) => {
     const order = {
       id: `ORDER-${Date.now()}`,
       currency: 'KES',
-      amount,
+      amount: parseFloat(amount).toFixed(2),
       description: 'Clothing Store Card Payment',
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
