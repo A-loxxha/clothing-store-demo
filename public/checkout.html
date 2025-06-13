@@ -300,12 +300,19 @@ renderCart();
         area: form.deliveryArea.value
       };
 
-      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const totalAmount = cart.reduce((sum, item) => {
+        const price = parseFloat(item.price);
+        const quantity = parseInt(item.quantity);
+        return sum + (price * quantity);
+      }, 0);
+
 
       if (paymentMethod === 'mpesa') {
         let phone = form.mpesaPhone.value.trim();
         if (!/^07\d{8}$/.test(phone)) return alert('Enter a valid Safaricom number.');
         phone = phone.replace(/^0/, '254');
+        
+        console.log('Sending amount:', totalAmount.toFixed(2), 'Type:', typeof totalAmount.toFixed(2));
 
         try {
           const res = await fetch(`${API_BASE}/api/pesapal/mpesa`, {
@@ -314,7 +321,7 @@ renderCart();
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({ phone, amount: totalAmount, cart, shipping })
+            body: JSON.stringify({ amount: totalAmount.toFixed(2), cart, shipping })
           });
 
           const data = await res.json();
@@ -331,6 +338,9 @@ renderCart();
         }
 
       } else if (paymentMethod === 'card') {
+
+        console.log('Sending amount:', totalAmount.toFixed(2), 'Type:', typeof totalAmount.toFixed(2));
+        
   try {
     const res = await fetch(`${API_BASE}/api/pesapal/initiate`, {
       method: 'POST',
@@ -338,7 +348,8 @@ renderCart();
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ amount: totalAmount, cart, shipping })
+      body: JSON.stringify({ amount: totalAmount.toFixed(2), cart, shipping })
+
     });
 
     if (!res.ok) {
