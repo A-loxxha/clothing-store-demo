@@ -54,9 +54,10 @@ app.post('/api/pay', async (req, res) => {
     const result = await initiatePayment(order);
     res.json({ success: true, redirect_url: result.redirect_url });
   } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ success: false, message: 'Payment initiation failed' });
-  }
+  console.error('PESAPAL ERROR:', err.response?.data || err.message);
+  res.status(500).json({ success: false, message: 'Failed to initiate M-Pesa payment' });
+}
+
 });
 
 app.get('/', (req, res) => {
