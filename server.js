@@ -11,6 +11,7 @@ const { initiatePayment } = require('./pesapal');
 const productRoutes = require('./routes/products');
 const userRoutes    = require('./routes/userRoutes'); // 👈 Added user auth routes
 const checkoutRoutes = require('./routes/checkout'); //
+const pesapalRoutes = require('./routes/pesapalRoutes');
 console.log('checkoutRoutes loaded:', typeof checkoutRoutes); // should be 'function'
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes); // 👈 Add user routes under /api/users
 app.use('/api/checkout', checkoutRoutes); // 👈 Add this below other app.use()
+app.use('/api/pesapal', pesapalRoutes);
 
 app.post('/api/pay', async (req, res) => {
   const { name, email, phone, amount, paymentMethod } = req.body;
