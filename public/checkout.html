@@ -331,27 +331,34 @@ renderCart();
         }
 
       } else if (paymentMethod === 'card') {
-        try {
-          const res = await fetch(`${API_BASE}/api/pesapal/initiate`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ amount: totalAmount, cart, shipping })
-          });
+  try {
+    const res = await fetch(`${API_BASE}/api/pesapal/initiate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ amount: totalAmount, cart, shipping })
+    });
 
-          const data = await res.json();
-          if (data.redirect_url) {
-            window.location.href = data.redirect_url;
-          } else {
-            alert('Card payment failed to initialize.');
-          }
-        } catch (err) {
-          alert('Server error. Try again.');
-          console.error(err);
-        }
-      }
+    if (!res.ok) {
+      const text = await res.text(); // fallback if not JSON
+      console.error('Server responded with:', text);
+      alert('Something went wrong while initiating card payment.');
+      return;
+    }
+
+    const data = await res.json();
+    if (data.redirect_url) {
+      window.location.href = data.redirect_url;
+    } else {
+      alert('Card payment failed to initialize.');
+    }
+  } catch (err) {
+    alert('Server error. Try again.');
+    console.error(err);
+  }
+}
     });
     });
   
