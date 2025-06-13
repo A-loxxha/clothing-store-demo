@@ -1,7 +1,7 @@
 const axios = require('axios');
 require('dotenv').config();
 
-const baseURL = "https://cybqa.pesapal.com";
+const baseURL = "https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken";
 let accessToken = '';
 
 async function authenticate() {
