@@ -188,16 +188,10 @@
         <input type="text" id="deliveryArea" placeholder="e.g. CBD, Westlands" required />
       </div>
 
-      <div class="payment-methods">
-        <label><input type="radio" name="payment_method" value="mpesa" checked /> M‑Pesa</label>
-        <label><input type="radio" name="payment_method" value="card" /> Bank Card</label>
-      </div>
+      <input type="hidden" name="payment_method" value="pesapal" />
 
-      <div class="mpesa-field" id="mpesa-field">
-        <label>M‑Pesa Phone Number</label>
-        <input type="tel" id="mpesaPhone" placeholder="07XXXXXXXX" pattern="07\d{8}" />
-      </div>
 
+  
       <button class="btn" type="submit">Place Order</button>
     </form>
   </div>
@@ -216,14 +210,7 @@
     }
 
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const mpesaField = document.getElementById('mpesa-field');
-    const paymentRadios = document.getElementsByName('payment_method');
-
-    paymentRadios.forEach(radio => {
-      radio.addEventListener('change', () => {
-        mpesaField.style.display = radio.value === 'mpesa' && radio.checked ? 'block' : 'none';
-      });
-    });
+  
 
   function updateCartStorage() {
   localStorage.setItem('cart', JSON.stringify(cart));
@@ -307,37 +294,9 @@ renderCart();
       }, 0);
 
 
-      if (paymentMethod === 'mpesa') {
-        let phone = form.mpesaPhone.value.trim();
-        if (!/^07\d{8}$/.test(phone)) return alert('Enter a valid Safaricom number.');
-        phone = phone.replace(/^0/, '254');
-        
-        console.log('Sending amount:', totalAmount.toFixed(2), 'Type:', typeof totalAmount.toFixed(2));
+    
 
-        try {
-          const res = await fetch(`${API_BASE}/api/pesapal/mpesa`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ amount: totalAmount.toFixed(2), cart, shipping })
-          });
-
-          const data = await res.json();
-          if (data.success) {
-            alert('STK Push sent! Check your phone.');
-            localStorage.removeItem('cart');
-            window.location.href = 'thank-you.html';
-          } else {
-            alert('Payment initiation failed.');
-          }
-        } catch (err) {
-          alert('Server error. Try again.');
-          console.error(err);
-        }
-
-      } else if (paymentMethod === 'card') {
+      if (paymentMethod === 'card') {
 
         console.log('Sending amount:', totalAmount.toFixed(2), 'Type:', typeof totalAmount.toFixed(2));
         
