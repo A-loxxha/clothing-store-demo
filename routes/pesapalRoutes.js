@@ -12,7 +12,7 @@ router.post('/mpesa', async (req, res) => {
     const order = {
       id: `ORDER-${Date.now()}`,
       currency: 'KES',
-      amount: parseFloat(amount).toFixed(2),
+      amount: parseFloat(amount).toFixed(2).toString(),
       description: 'Clothing Store Order',
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
@@ -25,6 +25,8 @@ router.post('/mpesa', async (req, res) => {
         city: shipping.city
       }
     };
+
+    console.log('Sending amount:', order.amount, 'Type:', typeof order.amount);
 
     const response = await initiatePayment(order);
     console.log('Pesapal card payment response:', response);
@@ -44,7 +46,7 @@ router.post('/initiate', async (req, res) => {
     const order = {
       id: `ORDER-${Date.now()}`,
       currency: 'KES',
-      amount: parseFloat(amount).toFixed(2),
+      amount: parseFloat(amount).toFixed(2).toString(),
       description: 'Clothing Store Card Payment',
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
@@ -57,6 +59,8 @@ router.post('/initiate', async (req, res) => {
         city: shipping.city
       }
     };
+
+    console.log('Sending amount:', order.amount, 'Type:', typeof order.amount);
 
     const response = await initiatePayment(order);
     res.json({ success: true, redirect_url: response.redirect_url });
