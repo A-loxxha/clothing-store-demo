@@ -72,12 +72,6 @@
       border-radius: 5px;
     }
 
-    .payment-methods {
-      display: flex;
-      gap: 20px;
-      margin: 15px 0;
-    }
-
     .btn {
       padding: 12px;
       width: 100%;
@@ -94,56 +88,52 @@
       color: var(--main-color);
     }
 
-    .mpesa-field {
-      display: none;
-    }
-
     .cart-total {
       font-weight: bold;
       text-align: right;
       font-size: 1.2rem;
       margin-top: 10px;
     }
+
     .quantity-controls button {
-  background: var(--main-color);
-  border: none;
-  color: white;
-  padding: 5px 10px;
-  font-size: 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
+      background: var(--main-color);
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-.quantity-controls button:hover {
-  background: var(--hover-black);
-  color: var(--main-color);
-}
+    .quantity-controls button:hover {
+      background: var(--hover-black);
+      color: var(--main-color);
+    }
 
-.quantity-controls span {
-  font-size: 1rem;
-  font-weight: bold;
-  margin: 0 10px;
-  display: inline-block;
-  min-width: 24px;
-  text-align: center;
-}
+    .quantity-controls span {
+      font-size: 1rem;
+      font-weight: bold;
+      margin: 0 10px;
+      display: inline-block;
+      min-width: 24px;
+      text-align: center;
+    }
 
-.remove-btn {
-  background: none;
-  border: none;
-  color: #ff4d4f;
-  font-size: 0.95rem;
-  margin-top: 6px;
-  cursor: pointer;
-  text-decoration: underline;
-  transition: color 0.3s ease;
-}
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #ff4d4f;
+      font-size: 0.95rem;
+      margin-top: 6px;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.3s ease;
+    }
 
-.remove-btn:hover {
-  color: #d11a2a;
-}
-
+    .remove-btn:hover {
+      color: #d11a2a;
+    }
   </style>
 </head>
 <body>
@@ -188,157 +178,131 @@
         <input type="text" id="deliveryArea" placeholder="e.g. CBD, Westlands" required />
       </div>
 
-      <div>
-  <label>Payment Method</label>
-  <div class="payment-methods">
-    <label><input type="radio" name="payment" value="mpesa" required /> M-Pesa</label>
-    <label><input type="radio" name="payment" value="card" required /> Bank Card</label>
-  </div>
-</div>
+      <input type="hidden" name="payment_method" value="card" />
 
-
-
-  
       <button class="btn" type="submit">Place Order</button>
     </form>
   </div>
 
   <script>
-
     document.addEventListener('DOMContentLoaded', () => {
-      
+      const API_BASE = 'https://clothing-store-demo.onrender.com';
+      const token = localStorage.getItem('token');
 
-    const API_BASE = 'https://clothing-store-demo.onrender.com';
-    const token = localStorage.getItem('token');
+      if (!token) {
+        localStorage.setItem('redirectAfterLogin', 'checkout.html');
+        window.location.href = 'login.html';
+      }
 
-    if (!token) {
-      localStorage.setItem('redirectAfterLogin', 'checkout.html');
-      window.location.href = 'login.html';
-    }
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  
+      function updateCartStorage() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+      }
 
-  function updateCartStorage() {
-  localStorage.setItem('cart', JSON.stringify(cart));
-  renderCart();
-}
-
-window.changeQuantity = function(index, delta) {
-  const item = cart[index];
-  const maxQty = item.stock || 1;
-
-  item.quantity = Math.min(Math.max(1, item.quantity + delta), maxQty);
-  updateCartStorage();
-};
-
-window.removeItem = function(index) {
-  cart.splice(index, 1);
-  updateCartStorage();
-};
-
-
-function renderCart() {
-  const container = document.getElementById('cart-items-container');
-  container.innerHTML = '';
-
-  if (cart.length === 0) {
-    container.innerHTML = '<p>Your cart is empty.</p>';
-    return;
-  }
-
-  let total = 0;
-  cart.forEach((item, i) => {
-    total += item.price * item.quantity;
-
-    const div = document.createElement('div');
-    div.className = 'cart-item';
-    div.innerHTML = `
-  <img src="${item.img}" alt="${item.name}" />
-  <div style="flex: 1">
-    <strong>${item.name}</strong><br/>
-    Price: KES ${item.price.toLocaleString()} <br/>
-    <div class="quantity-controls">
-      <button onclick="changeQuantity(${i}, -1)">−</button>
-      <span>${item.quantity}</span>
-      <button onclick="changeQuantity(${i}, 1)">+</button>
-    </div>
-    <button onclick="removeItem(${i})" class="remove-btn">Remove</button>
-  </div>
-`;
-
-    container.appendChild(div);
-  });
-
-  const totalDiv = document.createElement('div');
-  totalDiv.className = 'cart-total';
-  totalDiv.textContent = `Total: KES ${total.toFixed(2)}`;
-  container.appendChild(totalDiv);
-}
-
-// Initial render
-renderCart();
-
-
-    document.getElementById('checkout-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      const form = e.target;
-      const paymentMethod = [...paymentRadios].find(r => r.checked)?.value;
-
-      const shipping = {
-        name: form.fullName.value,
-        address: form.address.value,
-        city: form.city.value,
-        postal: form.postal.value,
-        country: form.country.value,
-        area: form.deliveryArea.value
+      window.changeQuantity = function(index, delta) {
+        const item = cart[index];
+        const maxQty = item.stock || 1;
+        item.quantity = Math.min(Math.max(1, item.quantity + delta), maxQty);
+        updateCartStorage();
       };
 
-      const totalAmount = cart.reduce((sum, item) => {
-        const price = parseFloat(item.price);
-        const quantity = parseInt(item.quantity);
-        return sum + (price * quantity);
-      }, 0);
+      window.removeItem = function(index) {
+        cart.splice(index, 1);
+        updateCartStorage();
+      };
 
+      function renderCart() {
+        const container = document.getElementById('cart-items-container');
+        container.innerHTML = '';
 
-    
+        if (cart.length === 0) {
+          container.innerHTML = '<p>Your cart is empty.</p>';
+          return;
+        }
 
-      if (paymentMethod === 'card') {
+        let total = 0;
+        cart.forEach((item, i) => {
+          total += item.price * item.quantity;
 
-        console.log('Sending amount:', totalAmount.toFixed(2), 'Type:', typeof totalAmount.toFixed(2));
-        
-  try {
-    const res = await fetch(`${API_BASE}/api/pesapal/initiate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ amount: totalAmount.toFixed(2), cart, shipping })
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `
+            <img src="${item.img}" alt="${item.name}" />
+            <div style="flex: 1">
+              <strong>${item.name}</strong><br/>
+              Price: KES ${item.price.toLocaleString()} <br/>
+              <div class="quantity-controls">
+                <button onclick="changeQuantity(${i}, -1)">−</button>
+                <span>${item.quantity}</span>
+                <button onclick="changeQuantity(${i}, 1)">+</button>
+              </div>
+              <button onclick="removeItem(${i})" class="remove-btn">Remove</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
 
+        const totalDiv = document.createElement('div');
+        totalDiv.className = 'cart-total';
+        totalDiv.textContent = `Total: KES ${total.toFixed(2)}`;
+        container.appendChild(totalDiv);
+      }
+
+      // Initial render
+      renderCart();
+
+      document.getElementById('checkout-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const form = e.target;
+
+        const shipping = {
+          name: form.fullName.value,
+          address: form.address.value,
+          city: form.city.value,
+          postal: form.postal.value,
+          country: form.country.value,
+          area: form.deliveryArea.value
+        };
+
+        const totalAmount = cart.reduce((sum, item) => {
+          return sum + parseFloat(item.price) * parseInt(item.quantity);
+        }, 0);
+
+        try {
+          const res = await fetch(`${API_BASE}/api/pesapal/initiate`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              amount: totalAmount.toFixed(2),
+              cart,
+              shipping
+            })
+          });
+
+          if (!res.ok) {
+            const text = await res.text();
+            console.error('Server responded with:', text);
+            alert('Something went wrong while initiating card payment.');
+            return;
+          }
+
+          const data = await res.json();
+          if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+          } else {
+            alert('Card payment failed to initialize.');
+          }
+        } catch (err) {
+          alert('Server error. Try again.');
+          console.error(err);
+        }
+      });
     });
-
-    if (!res.ok) {
-      const text = await res.text(); // fallback if not JSON
-      console.error('Server responded with:', text);
-      alert('Something went wrong while initiating card payment.');
-      return;
-    }
-
-    const data = await res.json();
-    if (data.redirect_url) {
-      window.location.href = data.redirect_url;
-    } else {
-      alert('Card payment failed to initialize.');
-    }
-  } catch (err) {
-    alert('Server error. Try again.');
-    console.error(err);
-  }
-}
-    });
-    });
-  
   </script>
 </body>
 </html>
