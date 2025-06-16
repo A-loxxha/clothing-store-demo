@@ -457,7 +457,14 @@ if (user) {
   <div class="modal-content">
     <span class="close">&times;</span>
     <div id="modal-body">Loading...</div>
-      <button class="btn"> Add to Cart</button>
+      <button class="add-to-cart-btn"
+            data-id="${p._id}"
+            data-name="${p.name}"
+            data-price="${isOffer ? priceNew : priceOld}"
+            data-stock="${p.stock}"
+            data-img="${mainImg}">
+      Add to Cart
+    </button>
           
   </div>
 </div>
