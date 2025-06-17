@@ -5,6 +5,7 @@ const path     = require('path');
 const mongoose = require('mongoose');
 const Product  = require('../models/product');
 const fs       = require('fs');
+const upload = require('../utils/multerSetup');
 
 const router = express.Router();
 
