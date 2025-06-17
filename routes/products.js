@@ -29,17 +29,21 @@ router.post('/', upload.fields([
     if (discountNum > 100) discountNum = 100;
     const isOffer = discountNum > 0;
 
-    // 2) Build image URLs
-    const baseUrl = getBaseUrl(req);
-    let imageUrl = '';
-    let hoverImageUrl = '';
+    // 2) Build image uploads
+    const cloudinary = require('../utils/cloudinary');
 
-    if (req.files.image1 && req.files.image1.length > 0) {
-      imageUrl = `${baseUrl}/uploads/${req.files.image1[0].filename}`;
-    }
-    if (req.files.image2 && req.files.image2.length > 0) {
-      hoverImageUrl = `${baseUrl}/uploads/${req.files.image2[0].filename}`;
-    }
+let imageUrl = '';
+let hoverImageUrl = '';
+
+if (req.files.image1 && req.files.image1.length > 0) {
+  const result1 = await cloudinary.uploader.upload(req.files.image1[0].path);
+  imageUrl = result1.secure_url;
+}
+if (req.files.image2 && req.files.image2.length > 0) {
+  const result2 = await cloudinary.uploader.upload(req.files.image2[0].path);
+  hoverImageUrl = result2.secure_url;
+}
+
 
     // 3) Create new product document
     const product = new Product({

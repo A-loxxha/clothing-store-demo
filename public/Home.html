@@ -321,17 +321,11 @@ if (user) {
   card.className = 'card';
   card.style.cursor = 'pointer';
 
-  const baseURL = 'https://clothing-store-demo.onrender.com';
+  const fixUrl = (url) => url?.startsWith('http') ? url.replace('http://', 'https://') : '';
 
-  const mainImg = p.imageUrl.startsWith('http')
-    ? p.imageUrl.replace('http://', 'https://')
-    : `${baseURL}${p.imageUrl}`;
+  const mainImg = fixUrl(p.imageUrl);
+  const hoverImg = fixUrl(p.hoverImageUrl) || mainImg;
 
-  const hoverImg = p.hoverImageUrl
-    ? (p.hoverImageUrl.startsWith('http')
-        ? p.hoverImageUrl.replace('http://', 'https://')
-        : `${baseURL}${p.hoverImageUrl}`)
-    : mainImg;
 
   const isOffer = p.isOffer && Number(p.discount) > 0;
   const discount = Number(p.discount) || 0;
