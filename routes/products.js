@@ -25,7 +25,6 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + ext);
   }
 });
-const upload = multer({ storage });
 
 // ── Helper to get base URL ──
 const getBaseUrl = (req) =>
