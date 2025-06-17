@@ -317,8 +317,16 @@ if (user) {
   }
 
       function sanitizeUrl(url) {
-  return url?.startsWith('http://') ? url.replace('http://', 'https://') : url;
+  if (!url) return '';
+  try {
+    const u = new URL(url);
+    u.protocol = 'https:'; // force HTTPS
+    return u.toString();
+  } catch (err) {
+    return url; // fallback
+  }
 }
+
 
 function makeCard(p) {
   const card = document.createElement('div');
