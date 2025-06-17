@@ -456,9 +456,8 @@ if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount >
       tr.innerHTML = `
         <td>
           <div style="position: relative; width: 80px; height: 80px;">
-            <img src="${sanitizeUrl(p.imageUrl)}" class="thumb main-img" />
-            <img src="${sanitizeUrl(p.hoverImageUrl || p.imageUrl)}" class="thumb hover-img" />
-
+            <img src="${p.imageUrl}" class="thumb main-img" />
+            <img src="${p.hoverImageUrl || p.imageUrl}" class="thumb hover-img" />
           </div>
         </td>
         <td><input type="text" value="${p.name || ''}" data-field="name" /></td>
