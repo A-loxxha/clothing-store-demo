@@ -316,16 +316,17 @@ if (user) {
     updateCartBadge();
   }
 
-      function makeCard(p) {
+      function sanitizeUrl(url) {
+  return url?.startsWith('http://') ? url.replace('http://', 'https://') : url;
+}
+
+function makeCard(p) {
   const card = document.createElement('div');
   card.className = 'card';
   card.style.cursor = 'pointer';
 
-  const fixUrl = (url) => url?.startsWith('http') ? url.replace('http://', 'https://') : '';
-
-  const mainImg = fixUrl(p.imageUrl);
-  const hoverImg = fixUrl(p.hoverImageUrl) || mainImg;
-
+  const mainImg = sanitizeUrl(p.imageUrl);
+  const hoverImg = sanitizeUrl(p.hoverImageUrl || p.imageUrl);
 
   const isOffer = p.isOffer && Number(p.discount) > 0;
   const discount = Number(p.discount) || 0;
@@ -359,6 +360,8 @@ if (user) {
       Add to Cart
     </button>
   `;
+}
+
   //////store items in localstorage
   function addToCart(product) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];

@@ -8,12 +8,6 @@ const router = express.Router();
 
 
 
-// ── Helper to get base URL ──
-const getBaseUrl = (req) =>
-  process.env.NODE_ENV === 'production'
-    ? 'https://clothing-store-demo.onrender.com'
-    : `${req.protocol}://${req.get('host')}`;
-
 // ── POST /api/products — create new product ──
 router.post('/', upload.fields([
   { name: 'image1', maxCount: 1 },
@@ -102,7 +96,12 @@ router.put('/:id', async (req, res) => {
       isOffer
     };
 
-    const updated = await Product.findByIdAndUpdate(id, updateData, { new: true });
+    const updated = await Product.findByIdAndUpdate(
+  id,
+  { $set: updateData },
+  { new: true, runValidators: true }
+);
+
     if (!updated) {
       return res.status(404).json({ error: 'Product not found' });
     }
