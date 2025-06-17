@@ -1,30 +1,12 @@
 // routes/products.js
 const express  = require('express');
-const multer   = require('multer');
-const path     = require('path');
 const mongoose = require('mongoose');
 const Product  = require('../models/product');
-const fs       = require('fs');
 const upload = require('../utils/multerSetup');
 
 const router = express.Router();
 
-// ── Ensure uploads folder exists ──
-const uploadsPath = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadsPath)) {
-  fs.mkdirSync(uploadsPath);
-}
 
-// ── Multer storage configuration ──
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsPath);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, Date.now() + ext);
-  }
-});
 
 // ── Helper to get base URL ──
 const getBaseUrl = (req) =>
