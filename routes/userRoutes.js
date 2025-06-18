@@ -37,10 +37,10 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // ✔️ works on HTTPS
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000
+    httpOnly: true,
+    secure: true,       // ✅ Required on Render (uses HTTPS)
+    sameSite: 'Lax',    // ✅ Use 'Lax' for same-origin sites
+    maxAge: 7 * 24 * 60 * 60 * 1000
 });
 
 
