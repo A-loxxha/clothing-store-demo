@@ -421,20 +421,13 @@
     }
 
     // Update summary counts
-    const totalItemsEl = document.getElementById('totalItems');
-if (totalItemsEl) totalItemsEl.textContent = products.length;
-
-const totalStockEl = document.getElementById('totalStock');
-if (totalStockEl) totalStockEl.textContent = products.reduce((sum, p) => sum + (p.stock || 0), 0);
-
-const totalOffersEl = document.getElementById('totalOffers');
-if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount > 0).length;
-
+    document.getElementById('totalItems')?.textContent = products.length;
+    document.getElementById('totalStock')?.textContent = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+    document.getElementById('totalOffers')?.textContent = products.filter(p => p.discount > 0).length;
 
     // Collect unique categories
     const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
 
-    // Populate filter dropdown if it's empty
     const filterSelect = document.getElementById('categoryFilter');
     if (filterSelect && filterSelect.options.length <= 1) {
       categories.forEach(cat => {
@@ -445,19 +438,26 @@ if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount >
       });
     }
 
-    // Get current selected filter
     const selectedCategory = filterSelect?.value || 'all';
-
     tableBody.innerHTML = '';
+
     products.forEach(p => {
       if (selectedCategory !== 'all' && p.category !== selectedCategory) return;
+
+      const fallbackImg = 'https://via.placeholder.com/80x80?text=No+Image';
+      const mainImg = p.imageUrl
+        ? (p.imageUrl.startsWith('http') ? p.imageUrl : `${API_BASE}${p.imageUrl}`)
+        : fallbackImg;
+      const hoverImg = p.hoverImageUrl
+        ? (p.hoverImageUrl.startsWith('http') ? p.hoverImageUrl : `${API_BASE}${p.hoverImageUrl}`)
+        : mainImg;
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>
           <div style="position: relative; width: 80px; height: 80px;">
-            <img src="${p.imageUrl}" class="thumb main-img" />
-            <img src="${p.hoverImageUrl || p.imageUrl}" class="thumb hover-img" />
+            <img src="${mainImg}" class="thumb main-img" />
+            <img src="${hoverImg}" class="thumb hover-img" />
           </div>
         </td>
         <td><input type="text" value="${p.name || ''}" data-field="name" /></td>
@@ -471,7 +471,6 @@ if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount >
         </td>
       `;
 
-      // Add hover effect styles once
       if (!document.getElementById('hover-css')) {
         const style = document.createElement('style');
         style.id = 'hover-css';
@@ -490,7 +489,6 @@ if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount >
         document.head.appendChild(style);
       }
 
-      // Update button
       tr.querySelector('.update-btn').addEventListener('click', async () => {
         const updatedProduct = {};
         tr.querySelectorAll('[data-field]').forEach(input => {
@@ -517,7 +515,6 @@ if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount >
         }
       });
 
-      // Delete button
       tr.querySelector('.delete-btn').addEventListener('click', async () => {
         if (!confirm('Delete this product?')) return;
         try {
@@ -537,6 +534,7 @@ if (totalOffersEl) totalOffersEl.textContent = products.filter(p => p.discount >
     tableBody.innerHTML = '<tr><td colspan="7">Error loading products.</td></tr>';
   }
 }
+
 document.getElementById('categoryFilter')?.addEventListener('change', fetchAndRenderProducts);
 
       // ── Initial Load ──
