@@ -318,25 +318,26 @@
     }
 
     function render(browseList) {
-      offersDiv.innerHTML = '';
-      browseDiv.innerHTML = '';
+  offersDiv.innerHTML = '';
+  browseDiv.innerHTML = '';
 
-      allProducts
-        .filter(p => p.isOffer)
-        .forEach(p => offersDiv.appendChild(makeCard(p)));
+  // Only display real offers (isOffer=true and discount > 0)
+  const realOffers = allProducts.filter(p => p.isOffer && Number(p.discount) > 0);
+  realOffers.forEach(p => offersDiv.appendChild(makeCard(p)));
 
-      if (!browseList.length) {
-        browseDiv.textContent = 'No products match.';
-      } else {
-        browseList.forEach(p => browseDiv.appendChild(makeCard(p)));
-      }
+  if (!realOffers.length)
+    offersDiv.textContent = 'Currently no offers.';
 
-      if (!offersDiv.children.length)
-        offersDiv.textContent = 'Currently no offers.';
+  if (!browseList.length) {
+    browseDiv.textContent = 'No products match.';
+  } else {
+    browseList.forEach(p => browseDiv.appendChild(makeCard(p)));
+  }
 
-      attachCartListeners();
-      updateCartBadge();
-    }
+  attachCartListeners();
+  updateCartBadge();
+}
+
 
     function makeCard(p) {
       const card = document.createElement('div');
