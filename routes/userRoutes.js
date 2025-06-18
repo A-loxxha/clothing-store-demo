@@ -62,10 +62,11 @@ router.post('/logout', (req, res) => {
 });
 
 // ── Get Logged-in User ──
-console.log('🍪 Token from cookie:', req.cookies.token);
 
 router.get('/me', async (req, res) => {
   try {
+
+    console.log('🍪 Token from cookie:', req.cookies.token);
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: 'Not logged in' });
 
