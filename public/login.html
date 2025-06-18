@@ -155,6 +155,7 @@
       if (!userRes.ok) throw new Error(userData.message || 'Could not fetch user');
 
       // Redirect
+      localStorage.setItem('user', JSON.stringify(userData));
       const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
       localStorage.removeItem('redirectAfterLogin');
       window.location.href = redirectTo;

@@ -183,8 +183,38 @@
     <div class="credit">Mabel <span>Statement</span> | all rights reserved</div>
   </section>
 
-  <script type="module">
-    import { updateCartBadge, setupModalCloseListeners } from './global.js';
+  <script>// global.js
+  export function updateCartBadge() {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const badge = document.getElementById('cart-badge');
+  if (badge) {
+    if (totalQty > 0) {
+      badge.textContent = totalQty;
+      badge.style.display = 'inline';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+}
+
+// Modal close handlers
+export function setupModalCloseListeners() {
+  document.querySelector('.close')?.addEventListener('click', () => {
+    document.getElementById('productModal').style.display = 'none';
+    updateCartBadge();
+  });
+
+  window.addEventListener('click', (e) => {
+    const modal = document.getElementById('productModal');
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+}
+</script>
+
+  <script>
 
   document.addEventListener('DOMContentLoaded', () => {
   
@@ -201,14 +231,22 @@
   const offerChk   = document.getElementById('offerOnly');
   const applyBtn   = document.getElementById('applyFilters');
 
-  document.getElementById('cart-btn').addEventListener('click', () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  if (!user) {
-    window.location.href = 'login.html';
-  } else {
-    window.location.href = 'checkout.html';
-  }
-});
+  document.getElementById('cart-btn').addEventListener('click', async () => {
+    try {
+      const res = await fetch('https://clothing-store-demo.onrender.com/api/users/me', {
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error('Not logged in');
+
+      // ✅ Logged in — go to checkout
+      window.location.href = 'checkout.html';
+    } catch (err) {
+      // Not logged in — redirect to login first
+      localStorage.setItem('redirectAfterLogin', 'checkout.html');
+      window.location.href = 'login.html';
+    }
+  });
 
   // Close modal when X is clicked
 document.querySelector('.close').addEventListener('click', () => {
@@ -471,7 +509,7 @@ async function checkLogin() {
 
     });
   </script>
-  <script type="module" src="global.js"></script>
+
   <script src="script.js"></script>
   <div id="productModal" class="modal">
   <div class="modal-content">
