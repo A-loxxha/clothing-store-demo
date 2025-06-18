@@ -124,8 +124,8 @@
       <button class="btn" type="submit">Search</button>
     </form>
     
-    <p id="welcomeUser" style="font-size: 2rem; color: var(--main-color); position: fixed; top: 20px; left: 20px;">Welcome, Guest</p>
-    
+    <p id="userDisplayName" style="font-size: 2rem; color: var(--main-color); position: fixed; top: 20px; left: 20px;">Welcome, Guest</p>
+  
   </header>
 
   <div id="toast-container" class="toast-container"></div>
@@ -234,15 +234,17 @@ async function checkLogin() {
       credentials: 'include'
     });
 
-    if (!res.ok) throw new Error('Not logged in');
-
+    if (!res.ok) throw new Error('Unauthorized');
     const data = await res.json();
-    document.getElementById('welcomeUser').textContent = `Welcome, ${data.user.name}`;
+
+    // 👇 Update the UI with user name
+    document.getElementById('userDisplayName').textContent = data.name;
   } catch (err) {
-    // Optional: redirect or show login link
-    document.getElementById('welcomeUser').textContent = 'Welcome, guest';
+    // Redirect if not logged in
+    window.location.href = 'login.html';
   }
 }
+
 
 
 
@@ -257,7 +259,7 @@ async function checkLogin() {
 
   window.location.href = 'login.html';
 });
-  
+
 
       
   // ----------------------------------
