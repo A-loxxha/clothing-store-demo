@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const router = express.Router();
-const JWT_SECRET = 'your_jwt_secret_key'; // 🔒 Replace with env variable in production
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key'; // ✅ Now consistent
 
 // ── Register ──
 router.post('/register', async (req, res) => {
@@ -36,12 +36,42 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     res.json({
-      token,
+      message: 'Login successful',
       user: { name: user.name, email: user.email }
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// ── Logout ──
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out' });
+});
+
+// ── Get Logged-in User ──
+router.get('/me', async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: 'Not logged in' });
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.userId).select('-password');
+    if (!user) return res.status(401).json({ message: 'User not found' });
+
+    res.json(user);
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid or expired token' });
   }
 });
 

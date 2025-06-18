@@ -13,16 +13,19 @@ const userRoutes    = require('./routes/userRoutes'); // 👈 Added user auth ro
 const checkoutRoutes = require('./routes/checkout'); //
 const pesapalRoutes = require('./routes/pesapalRoutes');
 console.log('checkoutRoutes loaded:', typeof checkoutRoutes); // should be 'function'
-
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ── Middleware ──
-app.use(cors());
+app.use(cors({
+  origin: 'https://clothing-store-demo.onrender.com', // or http://localhost:5500 during development
+  credentials: true
+}));
 app.use(express.json()); // for JSON bodies
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cookieParser());
 
 // ── API Routes ──
 app.use('/api/products', productRoutes);

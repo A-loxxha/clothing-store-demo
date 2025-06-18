@@ -102,65 +102,66 @@
     <p id="authMessage"></p>
   </div>
 <script>
-   const token = localStorage.getItem('token');
-  const user = localStorage.getItem('user');
+  const API_URL = 'https://clothing-store-demo.onrender.com'; // ✅ Update if needed
 
-
-  const API_URL = 'https://clothing-store-demo.onrender.com'; // change if hosted elsewhere
-
+  // Handle registration
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('registerName').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
 
-    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
-    });
-    
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
+    try {
+      const res = await fetch(`${API_URL}/api/users/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+        credentials: 'include'
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      document.getElementById('authMessage').textContent = 'Registered successfully. Please log in.';
-    } else {
-      document.getElementById('authMessage').textContent = data.message || 'Registration failed';
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Registration failed');
+
+      document.getElementById('authMessage').textContent = '✅ Registered successfully. Please log in.';
+    } catch (err) {
+      document.getElementById('authMessage').textContent = '❌ ' + err.message;
     }
   });
 
+  // Handle login
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/login', {
+    try {
+      const loginRes = await fetch(`${API_URL}/api/users/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include' // 🔥 send/receive cookies
+      });
 
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+      const loginData = await loginRes.json();
+      if (!loginRes.ok) throw new Error(loginData.message || 'Login failed');
 
-     if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
-    
-    const data = await res.json();
-    if (res.ok && data.token) {
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('user', JSON.stringify(data.user));
+      // ✅ After successful login, fetch the user info
+      const userRes = await fetch(`${API_URL}/api/users/me`, {
+        method: 'GET',
+        credentials: 'include' // 🍪 send the token cookie
+      });
 
-  const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
-  localStorage.removeItem('redirectAfterLogin');
-  window.location.href = redirectTo;
-}
-    else {
-      document.getElementById('authMessage').textContent = data.message || 'Login failed';
+      const userData = await userRes.json();
+      if (!userRes.ok) throw new Error(userData.message || 'Could not fetch user');
+
+      // Redirect
+      const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
+      localStorage.removeItem('redirectAfterLogin');
+      window.location.href = redirectTo;
+
+    } catch (err) {
+      document.getElementById('authMessage').textContent = '❌ ' + err.message;
     }
   });
 </script>
+
