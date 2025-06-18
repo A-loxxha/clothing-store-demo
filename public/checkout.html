@@ -192,24 +192,22 @@
 
 async function checkLogin() {
   try {
-    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/me', {
+    const res = await fetch(`${API_URL}/api/users/me`, {
       method: 'GET',
-      credentials: 'include',
-      cache: 'no-store' // 💡 Prevent ETag 304
+      credentials: 'include'
     });
 
     if (!res.ok) throw new Error('Unauthorized');
 
-    const data = await res.json(); // ✅ Now always returns body
-    console.log('✅ Logged in user:', data.name || data.email || data); // safe fallback
-
-    // Optionally update UI
-    document.getElementById('username-display').textContent = data.name || 'User';
+    const data = await res.json();
+    console.log('✅ Logged in user:', data.name);
+    return data; // Optional for reuse
   } catch (err) {
-    console.warn('🔒 Not logged in, redirecting to login.html');
+    localStorage.setItem('redirectAfterLogin', window.location.pathname); // Save current page
     window.location.href = 'login.html';
   }
 }
+
 
 
 
