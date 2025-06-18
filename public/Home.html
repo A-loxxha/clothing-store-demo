@@ -139,7 +139,7 @@
 
   <section>
     <h1 class="heading"><span>Special</span> offers</h1>
-    <div id="offers" class="product-grid">Loading offers...</div>
+    <div id="offers" class="product-grid"></div>
   </section>
 
   <section>
@@ -322,6 +322,7 @@
   browseDiv.innerHTML = '';
 
   // 🔸 Define real offers
+  console.log("Rendering real offers:");
   const realOffers = allProducts.filter(p => p.isOffer && Number(p.discount) > 0);
 
   // 🔸 Render offers
