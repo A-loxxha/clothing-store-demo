@@ -79,6 +79,8 @@ router.get('/me', async (req, res) => {
   } catch (err) {
     res.status(401).json({ message: 'Invalid or expired token' });
   }
+  res.set('Cache-Control', 'no-store');
+
 });
 
 module.exports = router;
