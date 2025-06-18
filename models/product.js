@@ -16,8 +16,9 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  imageUrl:       { type: String, default: '' }, // main image
-  hoverImageUrl:  { type: String, default: '' }  // second image (on hover)
+  imagePublicId: String,
+  hoverImagePublicId: String,
+
 }, { timestamps: true });
 
 module.exports = mongoose.models.Product || mongoose.model('Product', productSchema);

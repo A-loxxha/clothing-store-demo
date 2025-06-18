@@ -78,11 +78,24 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.sendStatus(204);
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+
+    // Delete images from Cloudinary
+    if (product.imagePublicId) {
+      await cloudinary.uploader.destroy(product.imagePublicId);
+    }
+    if (product.hoverImagePublicId) {
+      await cloudinary.uploader.destroy(product.hoverImagePublicId);
+    }
+
+    await product.deleteOne();
+    res.json({ message: 'Product and images deleted' });
   } catch (err) {
-    res.status(500).json({ error: 'Delete failed' });
+    console.error('Delete error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 module.exports = router;
