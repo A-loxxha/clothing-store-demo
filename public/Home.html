@@ -225,21 +225,39 @@ window.addEventListener('click', (e) => {
       
 /////////Show_Guest
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  checkLogin();
 
-if (user) {
-  document.getElementById('welcomeUser').textContent = `Welcome, ${user.name}`;
+async function checkLogin() {
+  try {
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/me', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!res.ok) throw new Error('Not logged in');
+
+    const data = await res.json();
+    document.getElementById('welcomeUser').textContent = `Welcome, ${data.user.name}`;
+  } catch (err) {
+    // Optional: redirect or show login link
+    document.getElementById('welcomeUser').textContent = 'Welcome, guest';
+  }
 }
 
 
 
 
+
   // Logout functionality
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = 'login.html';
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await fetch('https://clothing-store-demo.onrender.com/api/users/logout', {
+    method: 'POST',
+    credentials: 'include'
   });
+
+  window.location.href = 'login.html';
+});
+  
 
       
   // ----------------------------------

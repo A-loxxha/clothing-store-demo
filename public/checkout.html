@@ -187,12 +187,24 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const API_BASE = 'https://clothing-store-demo.onrender.com';
-      const token = localStorage.getItem('token');
+  
+      checkLogin();
 
-      if (!token) {
-        localStorage.setItem('redirectAfterLogin', 'checkout.html');
-        window.location.href = 'login.html';
-      }
+async function checkLogin() {
+  try {
+    const res = await fetch('https://clothing-store-demo.onrender.com/api/users/me', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!res.ok) throw new Error('Unauthorized');
+    const data = await res.json();
+    console.log('Logged in user:', data.user.name); // Optional
+  } catch (err) {
+    window.location.href = 'login.html';
+  }
+}
+
 
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -274,9 +286,10 @@
           const res = await fetch(`${API_BASE}/api/pesapal/initiate`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
+            'Content-Type': 'application/json'
             },
+            credentials: 'include',
+
             body: JSON.stringify({
               amount: totalAmount.toFixed(2),
               cart,
