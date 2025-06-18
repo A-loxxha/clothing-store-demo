@@ -232,7 +232,7 @@
             <img src="${item.img}" alt="${item.name}" />
             <div style="flex: 1">
               <strong>${item.name}</strong><br/>
-              Price: KES ${item.price.toLocaleString()} <br/>
+              Price: KES ${(parseFloat(item.price) || 0).toLocaleString()} <br/>
               <div class="quantity-controls">
                 <button onclick="changeQuantity(${i}, -1)">−</button>
                 <span>${item.quantity}</span>
