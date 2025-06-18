@@ -321,13 +321,17 @@
   offersDiv.innerHTML = '';
   browseDiv.innerHTML = '';
 
-  // Only display real offers (isOffer=true and discount > 0)
+  // 🔸 Define real offers
   const realOffers = allProducts.filter(p => p.isOffer && Number(p.discount) > 0);
-  realOffers.forEach(p => offersDiv.appendChild(makeCard(p)));
 
-  if (!realOffers.length)
+  // 🔸 Render offers
+  if (realOffers.length) {
+    realOffers.forEach(p => offersDiv.appendChild(makeCard(p)));
+  } else {
     offersDiv.textContent = 'Currently no offers.';
+  }
 
+  // 🔸 Render browse products
   if (!browseList.length) {
     browseDiv.textContent = 'No products match.';
   } else {
@@ -337,6 +341,7 @@
   attachCartListeners();
   updateCartBadge();
 }
+
 
 
     function makeCard(p) {
