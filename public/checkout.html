@@ -192,7 +192,7 @@
 
 async function checkLogin() {
   try {
-    const res = await fetch(`${API_URL}/api/users/me`, {
+    const res = await fetch(`${API_BASE}/api/users/me`, {
       method: 'GET',
       credentials: 'include'
     });
