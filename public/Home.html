@@ -323,9 +323,9 @@ if (user) {
 
   const baseURL = 'https://clothing-store-demo.onrender.com';
 
-  const mainImg = p.imagePublicId.startsWith('http')
-    ? p.imagePublicId.replace('http://', 'https://')
-    : `${baseURL}${p.imagePublicId}`;
+  const mainImg = p.imageUrl.startsWith('http')
+    ? p.imageUrl.replace('http://', 'https://')
+    : `${baseURL}${p.imageUrl}`;
 
   const hoverImg = p.hoverImageUrl
     ? (p.hoverImageUrl.startsWith('http')
