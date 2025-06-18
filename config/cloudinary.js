@@ -1,11 +1,5 @@
 const cloudinary = require('cloudinary').v2;
 
-console.log('Cloudinary ENV check:', {
-  cloud: process.env.CLOUDINARY_CLOUD_NAME,
-  key: process.env.CLOUDINARY_API_KEY,
-  secret: process.env.CLOUDINARY_API_SECRET
-});
-
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
