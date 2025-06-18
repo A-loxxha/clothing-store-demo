@@ -199,7 +199,8 @@ async function checkLogin() {
 
     if (!res.ok) throw new Error('Unauthorized');
     const data = await res.json();
-    console.log('Logged in user:', data.user.name); // Optional
+    console.log('✅ Logged in user:', data.name); // ✅ works
+
   } catch (err) {
     window.location.href = 'login.html';
   }
