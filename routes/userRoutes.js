@@ -38,10 +38,12 @@ router.post('/login', async (req, res) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      secure: process.env.NODE_ENV === 'production', // ✔️ works on HTTPS
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+});
+
+
 
     res.json({
       message: 'Login successful',
@@ -60,6 +62,8 @@ router.post('/logout', (req, res) => {
 });
 
 // ── Get Logged-in User ──
+console.log('🍪 Token from cookie:', req.cookies.token);
+
 router.get('/me', async (req, res) => {
   try {
     const token = req.cookies.token;
