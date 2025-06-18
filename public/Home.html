@@ -276,18 +276,10 @@ if (user) {
   // 2️⃣   helpers
   // ----------------------------------
   async function fetchProducts() {
-  try {
     const res = await fetch(API);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
-  } catch (err) {
-    offersDiv.textContent = 'Failed to load products.';
-    browseDiv.textContent = 'Failed to load products.';
-    console.error('Error fetching products:', err);
-    return [];
   }
-}
-
 
   function populateCategories(products) {
     const cats = [...new Set(products.map(p => p.category).filter(Boolean))];
@@ -324,25 +316,22 @@ if (user) {
     updateCartBadge();
   }
 
-      function sanitizeUrl(url) {
-  if (!url) return '';
-  try {
-    const u = new URL(url);
-    u.protocol = 'https:'; // force HTTPS
-    return u.toString();
-  } catch (err) {
-    return url; // fallback
-  }
-}
-
-
-function makeCard(p) {
+      function makeCard(p) {
   const card = document.createElement('div');
   card.className = 'card';
   card.style.cursor = 'pointer';
 
-  const mainImg = sanitizeUrl(p.imageUrl);
-  const hoverImg = sanitizeUrl(p.hoverImageUrl || p.imageUrl);
+  const baseURL = 'https://clothing-store-demo.onrender.com';
+
+  const mainImg = p.imageUrl.startsWith('http')
+    ? p.imageUrl.replace('http://', 'https://')
+    : `${baseURL}${p.imageUrl}`;
+
+  const hoverImg = p.hoverImageUrl
+    ? (p.hoverImageUrl.startsWith('http')
+        ? p.hoverImageUrl.replace('http://', 'https://')
+        : `${baseURL}${p.hoverImageUrl}`)
+    : mainImg;
 
   const isOffer = p.isOffer && Number(p.discount) > 0;
   const discount = Number(p.discount) || 0;
@@ -363,8 +352,7 @@ function makeCard(p) {
           <span style="text-decoration:line-through;color:#888;">
             KES ${priceOld.toLocaleString()}
           </span><br>
-          <strong style="color:#ce8e1a;">KES ${Number(priceNew).toLocaleString()}</strong>
-
+          <strong style="color:#ce8e1a;">KES ${priceNew}</strong>
         </p>`
       : `<p>KES ${priceOld.toLocaleString()}</p>` }
     <small>In stock: ${p.stock}</small>
@@ -377,6 +365,22 @@ function makeCard(p) {
       Add to Cart
     </button>
   `;
+  //////store items in localstorage
+  function addToCart(product) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Check if product already exists, update quantity
+    const index = cart.findIndex(item => item.name === product.name);
+    if (index > -1) {
+      cart[index].quantity += 1;
+    } else {
+      product.quantity = 1;
+      cart.push(product);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${product.name} added to cart!`);
+  }
 
   // ✨ Add modal open functionality
   card.addEventListener('click', (e) => {
@@ -400,25 +404,6 @@ function makeCard(p) {
 
   return card;
 }
-
-  //////store items in localstorage
-  function addToCart(product) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // Check if product already exists, update quantity
-    const index = cart.findIndex(item => item.name === product.name);
-    if (index > -1) {
-      cart[index].quantity += 1;
-    } else {
-      product.quantity = 1;
-      cart.push(product);
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert(`${product.name} added to cart!`);
-  }
-
-  
 
 
 
