@@ -63,10 +63,8 @@ router.post('/logout', (req, res) => {
 });
 
 // ── Get Logged-in User ──
-
 router.get('/me', async (req, res) => {
   try {
-
     console.log('🍪 Token from cookie:', req.cookies.token);
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: 'Not logged in' });
@@ -75,12 +73,14 @@ router.get('/me', async (req, res) => {
     const user = await User.findById(decoded.userId).select('-password');
     if (!user) return res.status(401).json({ message: 'User not found' });
 
-    res.json(user);
+    // ✅ Set header BEFORE sending response
+    res.set('Cache-Control', 'no-store');
+    return res.json(user); // ✅ Add return for safety
   } catch (err) {
-    res.status(401).json({ message: 'Invalid or expired token' });
+    console.error(err);
+    return res.status(401).json({ message: 'Invalid or expired token' });
   }
-  res.set('Cache-Control', 'no-store');
-
 });
+
 
 module.exports = router;
