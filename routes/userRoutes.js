@@ -3,25 +3,32 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { requireLogin, requireAdmin } = require('../middleware/auth');
+const crypto = require('crypto');
+const sendVerificationEmail = require('../utils/sendEmail');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key'; // ✅ Now consistent
 
 // ── Register ──
 router.post('/register', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: 'Email already exists' });
+  const existing = await User.findOne({ email });
+  if (existing) return res.status(400).json({ message: 'Email already exists' });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword });
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const verificationToken = crypto.randomBytes(32).toString('hex');
 
-    res.status(201).json({ message: 'User registered', user: { name: user.name, email: user.email } });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
+  const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    verificationToken
+  });
+
+  await sendVerificationEmail(user.email, verificationToken);
+
+  res.status(201).json({ message: 'User registered. Check your email to verify your account.' });
 });
 
 // ── Login ──
@@ -67,28 +74,38 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logged out' });
 });
 
+// ── Create Verification Route ──
+router.get('/verify/:token', async (req, res) => {
+  const user = await User.findOne({ verificationToken: req.params.token });
+
+  if (!user) return res.status(400).send('Invalid or expired verification token.');
+
+  user.isVerified = true;
+  user.verificationToken = undefined;
+  await user.save();
+
+  res.send('✅ Email verified! You can now log in.');
+});
+
 
 // ── Get Logged-in User ──
 router.get('/me', requireLogin, async (req, res) => {
-
   try {
-    console.log('🍪 Token from cookie:', req.cookies.token);
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: 'Not logged in' });
+    // User is already attached by requireLogin middleware
+    const user = req.user;
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
+    if (!user.isVerified) {
+      return res.status(403).json({ message: 'Please verify your email first.' });
+    }
 
-    if (!user) return res.status(401).json({ message: 'User not found' });
-
-    // ✅ Set header BEFORE sending response
     res.set('Cache-Control', 'no-store');
-    return res.json(user); // ✅ Add return for safety
+    return res.json(user); // No password included due to .select('-password') in middleware
   } catch (err) {
-    console.error(err);
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    console.error('Error in /me:', err.message);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 
 // ✅ Example admin-only route
