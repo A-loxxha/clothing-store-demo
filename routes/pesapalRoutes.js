@@ -90,14 +90,5 @@ router.post('/initiate', async (req, res) => {
 });
 
 
-// after Pesapal response
-const newOrder = new Order({
-  cart,
-  shipping,
-  paymentMethod: 'card',
-  totalAmount: parseFloat(amount),
-});
-
-await newOrder.save();
 
 module.exports = router;
