@@ -323,7 +323,12 @@
 
   // 🔸 Define real offers
   console.log("Rendering real offers:");
-  const realOffers = allProducts.filter(p => p.isOffer && Number(p.discount) > 0);
+  const realOffers = allProducts.filter(p =>
+  p.isOffer === true &&
+  typeof p.discount === 'number' &&
+  p.discount > 0
+);
+
 
   // 🔸 Render offers
   if (realOffers.length) {
