@@ -76,6 +76,7 @@ router.get('/me', async (req, res) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.userId).select('-password');
+
     if (!user) return res.status(401).json({ message: 'User not found' });
 
     // ✅ Set header BEFORE sending response
@@ -85,6 +86,31 @@ router.get('/me', async (req, res) => {
     console.error(err);
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
+});
+
+///////admin/////////
+
+const requireAdmin = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+    if (!user || !user.isAdmin) {
+      return res.status(403).json({ message: 'Forbidden: Admins only' });
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
+// ✅ Example admin-only route
+router.get('/admin-check', requireAdmin, (req, res) => {
+  res.json({ message: 'Welcome, admin!' });
 });
 
 
