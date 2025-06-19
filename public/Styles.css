@@ -964,12 +964,14 @@ body{
 
 .modal-content img {
   width: 100%;
+  height: auto; 
   border-radius: 12px;
-  object-fit: cover;
+  object-fit: contain; 
   margin-bottom: 1rem;
-  max-height: 300px;
+  max-height: 90vh;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
 
 .modal-content p {
   font-size: 1.5rem;
