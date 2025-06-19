@@ -90,23 +90,6 @@ router.get('/me', requireLogin, async (req, res) => {
   }
 });
 
-///////admin/////////
-
-  try {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: 'Unauthorized' });
-
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.userId);
-    if (!user || !user.isAdmin) {
-      return res.status(403).json({ message: 'Forbidden: Admins only' });
-    }
-
-    req.user = user;
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
-  };
 
 // ✅ Example admin-only route
 router.get('/admin-check', requireAdmin, (req, res) => {
