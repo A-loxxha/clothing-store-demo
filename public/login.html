@@ -147,43 +147,45 @@
       loginData = await loginRes.json();
 
       if (!loginRes.ok) {
-        // Check for unverified email case
-        if (loginData.message === 'Email not verified') {
-          document.getElementById('authMessage').innerHTML = `
-            ⚠️ Please verify your email to continue.<br>
-            <button id="resendBtn" style="
-              background-color: #fff; 
-              color: var(--main-color); 
-              border: 1px solid var(--main-color); 
-              padding: 8px 14px; 
-              border-radius: 20px; 
-              margin-top: 10px;
-              cursor: pointer;
-            ">Resend Verification Email</button>
-          `;
+        // 🔐 Check for unverified email before calling /me
+if (loginData.message === 'Email not verified') {
+  document.getElementById('authMessage').innerHTML = `
+    ⚠️ Please verify your email to continue.<br>
+    <button id="resendBtn" style="
+      background-color: #fff; 
+      color: var(--main-color); 
+      border: 1px solid var(--main-color); 
+      padding: 8px 14px; 
+      border-radius: 20px; 
+      margin-top: 10px;
+      cursor: pointer;
+    ">Resend Verification Email</button>
+  `;
 
-          document.getElementById('resendBtn').addEventListener('click', async () => {
-            try {
-              const resendRes = await fetch(`${API_URL}/api/users/resend-verification`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-                credentials: 'include'
-              });
+  document.getElementById('resendBtn').addEventListener('click', async () => {
+    try {
+      const resendRes = await fetch(`${API_URL}/api/users/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+        credentials: 'include'
+      });
 
-              const resendData = await resendRes.json();
-              if (!resendRes.ok) throw new Error(resendData.message);
-              document.getElementById('authMessage').textContent = '📧 Verification email sent.';
-            } catch (err) {
-              document.getElementById('authMessage').textContent = '❌ ' + err.message;
-            }
-          });
+      const resendData = await resendRes.json();
+      if (!resendRes.ok) throw new Error(resendData.message);
+      document.getElementById('authMessage').textContent = '📧 Verification email sent.';
+    } catch (err) {
+      document.getElementById('authMessage').textContent = '❌ ' + err.message;
+    }
+  });
 
-          return; // Stop login process
-        }
+  return; // ❌ Don't fetch /me or redirect
+}
 
-        throw new Error(loginData.message || 'Login failed');
-      }
+if (!loginRes.ok) {
+  throw new Error(loginData.message || 'Login failed');
+}
+}
 
       // ✅ Login successful → Fetch user info
       const userRes = await fetch(`${API_URL}/api/users/me`, {
