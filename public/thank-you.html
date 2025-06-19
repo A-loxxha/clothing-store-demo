@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Thank You for Your Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --main-color: #ceb974;
+      --dark: #161515;
+      --light-bg: #f8f8f8;
+      --accent: #444;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .thank-you-container {
+      background: white;
+      max-width: 600px;
+      padding: 3rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .thank-you-container .icon {
+      font-size: 4rem;
+      color: var(--main-color);
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--dark);
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 2rem;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .btn.track {
+      background: var(--main-color);
+      color: #fff;
+    }
+
+    .btn.track:hover {
+      background: #bfa654;
+    }
+
+    .btn.home {
+      background: transparent;
+      border: 2px solid var(--main-color);
+      color: var(--main-color);
+    }
+
+    .btn.home:hover {
+      background: var(--main-color);
+      color: white;
+    }
+
+    @media (max-width: 500px) {
+      .thank-you-container {
+        padding: 2rem 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="thank-you-container">
+    <div class="icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <h1>Thank You for Your Order!</h1>
+    <p>Your payment was successful. We’re preparing your items for delivery.</p>
+
+    <div class="buttons">
+      <a href="track.html" class="btn track">Track Your Order</a>
+      <a href="home.html" class="btn home">Continue Shopping</a>
+    </div>
+  </div>
+
+</body>
+</html>
