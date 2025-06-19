@@ -29,32 +29,37 @@ router.post('/', upload.fields([{ name: 'image1' }, { name: 'image2' }]), async 
 
     // Helper to upload to Cloudinary
     const uploadToCloudinary = (file) => {
-      return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: 'clothing-store' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result.secure_url);
-          }
-        );
-        streamifier.createReadStream(file.buffer).pipe(stream);
-      });
-    };
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'clothing-store' },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result); // 👈 returns full result with public_id
+      }
+    );
+    streamifier.createReadStream(file.buffer).pipe(stream);
+  });
+};
 
-    const imageUrl = await uploadToCloudinary(files.image1[0]);
-    const hoverImageUrl = files.image2?.[0]
-      ? await uploadToCloudinary(files.image2[0])
-      : imageUrl;
 
-    const newProduct = new Product({
-      name,
-      price,
-      discount,
-      stock,
-      category,
-      imageUrl,
-      hoverImageUrl
-    });
+  const image1Result = await uploadToCloudinary(files.image1[0]);
+  const image2Result = files.image2?.[0]
+  ? await uploadToCloudinary(files.image2[0])
+  : image1Result;
+
+  const newProduct = new Product({
+  name,
+  price,
+  discount,
+  stock,
+  category,
+  imageUrl: image1Result.secure_url,
+  hoverImageUrl: image2Result.secure_url,
+  imagePublicId: image1Result.public_id,
+  hoverImagePublicId: image2Result.public_id,
+  isOffer: Number(discount) > 0
+});
+
 
     await newProduct.save();
     res.status(201).json(newProduct);
@@ -84,11 +89,22 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ error: 'Not found' });
+
+    // 🧼 Delete images from Cloudinary
+    const idsToDelete = [product.imagePublicId, product.hoverImagePublicId].filter(Boolean);
+    for (const publicId of idsToDelete) {
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    await product.deleteOne();
     res.sendStatus(204);
   } catch (err) {
+    console.error('Delete error:', err);
     res.status(500).json({ error: 'Delete failed' });
   }
 });
+
 
 module.exports = router;

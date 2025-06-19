@@ -15,11 +15,13 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  imageUrl:       { type: String, default: '' },
-  hoverImageUrl:  { type: String, default: '' }
+  imageUrl:            { type: String, default: '' },
+  hoverImageUrl:       { type: String, default: '' },
+  imagePublicId:       { type: String, default: '' },  // ✅ for Cloudinary deletion
+  hoverImagePublicId:  { type: String, default: '' }   // ✅ for Cloudinary deletion
 }, { timestamps: true });
 
-// ✅ Auto-calculate isOffer
+// ✅ Automatically set isOffer before saving
 productSchema.pre('save', function (next) {
   this.isOffer = this.discount > 0;
   next();
