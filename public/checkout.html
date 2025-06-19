@@ -310,11 +310,18 @@ async function checkLogin() {
 
     const data = await res.json();
     if (data.redirect_url) {
-      window.location.href = data.redirect_url;
-    } else {
-      alert('Card payment failed to initialize.');
-    }
-  } catch (err) {
+  // ✅ Store info for thank-you page
+  localStorage.setItem('latestOrder', JSON.stringify({
+    name: shipping.name,
+    totalAmount: totalAmount.toFixed(2)
+  }));
+
+  window.location.href = data.redirect_url;
+} else {
+  alert('Card payment failed to initialize.');
+}
+
+      } catch (err) {
     alert('Server error. Try again.');
     console.error(err);
   }

@@ -3,12 +3,21 @@ const router = express.Router();
 const { authenticate, initiatePayment } = require('../pesapal');
 const axios = require('axios');
 const Order = require('../models/order');
+const Product = require('../models/product'); // ✅ Import product model
 
 // M-PESA Route
 router.post('/mpesa', async (req, res) => {
   try {
     const token = await authenticate();
     const { phone, amount, cart, shipping } = req.body;
+
+    // ✅ Check if stock is available
+    for (const item of cart) {
+      const product = await Product.findById(item.id);
+      if (!product || product.stock < item.quantity) {
+        return res.status(400).json({ success: false, message: `Not enough stock for ${item.name}` });
+      }
+    }
 
     const order = {
       id: `ORDER-${Date.now()}`,
@@ -29,7 +38,7 @@ router.post('/mpesa', async (req, res) => {
 
     const response = await initiatePayment(order);
 
-    // ✅ Save order in MongoDB
+    // ✅ Save order
     const newOrder = new Order({
       cart,
       shipping,
@@ -39,6 +48,13 @@ router.post('/mpesa', async (req, res) => {
     });
     await newOrder.save();
 
+    // ✅ Reduce stock
+    for (const item of cart) {
+      await Product.findByIdAndUpdate(item.id, {
+        $inc: { stock: -item.quantity }
+      });
+    }
+
     res.json({ success: true, ...response });
   } catch (err) {
     console.error('PESAPAL M-PESA ERROR:', err.response?.data || err.message);
@@ -47,11 +63,19 @@ router.post('/mpesa', async (req, res) => {
 });
 
 
-// CARD Route — fix route name to match frontend
+// CARD Route
 router.post('/initiate', async (req, res) => {
   try {
     const token = await authenticate();
     const { amount, cart, shipping } = req.body;
+
+    // ✅ Check stock before saving
+    for (const item of cart) {
+      const product = await Product.findById(item.id);
+      if (!product || product.stock < item.quantity) {
+        return res.status(400).json({ success: false, message: `Not enough stock for ${item.name}` });
+      }
+    }
 
     const order = {
       id: `ORDER-${Date.now()}`,
@@ -72,7 +96,7 @@ router.post('/initiate', async (req, res) => {
 
     const response = await initiatePayment(order);
 
-    // ✅ Save order in MongoDB
+    // ✅ Save order
     const newOrder = new Order({
       cart,
       shipping,
@@ -82,13 +106,18 @@ router.post('/initiate', async (req, res) => {
     });
     await newOrder.save();
 
+    // ✅ Reduce stock
+    for (const item of cart) {
+      await Product.findByIdAndUpdate(item.id, {
+        $inc: { stock: -item.quantity }
+      });
+    }
+
     res.json({ success: true, redirect_url: response.redirect_url });
   } catch (err) {
     console.error('PESAPAL CARD ERROR:', err.response?.data || err.message);
     res.status(500).json({ success: false, message: 'Failed to initiate card payment' });
   }
 });
-
-
 
 module.exports = router;

@@ -116,5 +116,35 @@
     </div>
   </div>
 
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Clear the cart after order
+    localStorage.removeItem('cart');
+
+    // OPTIONAL: If order details were stored temporarily before redirect
+    const orderDetails = JSON.parse(localStorage.getItem('latestOrder')) || null;
+
+    if (orderDetails) {
+      const { name, totalAmount } = orderDetails;
+      const nameEl = document.createElement('p');
+      nameEl.textContent = `Thank you, ${name}!`;
+      nameEl.style.fontSize = '1.2rem';
+      nameEl.style.marginBottom = '0.5rem';
+      nameEl.style.fontWeight = 'bold';
+
+      const amountEl = document.createElement('p');
+      amountEl.textContent = `Order Total: KES ${Number(totalAmount).toLocaleString()}`;
+      amountEl.style.color = '#444';
+
+      const container = document.querySelector('.thank-you-container');
+      container.insertBefore(nameEl, container.querySelector('p')); // Insert above the default message
+      container.insertBefore(amountEl, container.querySelector('.buttons'));
+      
+      // Optionally clear latestOrder
+      localStorage.removeItem('latestOrder');
+    }
+  });
+</script>
+
 </body>
 </html>

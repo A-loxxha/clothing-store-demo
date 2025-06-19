@@ -237,7 +237,9 @@
 
       card.innerHTML = `
         <div class="img-wrapper-container" style="position:relative">
-          ${isOffer ? `<span class="discount-badge">-${discount}%</span>` : ''}
+      ${p.stock === 0 ? `<span class="sold-out-badge">Sold Out</span>` : ''}
+      ${isOffer ? `<span class="discount-badge">-${discount}%</span>` : ''}
+
           <div class="img-wrapper">
             <img src="${mainImg}" alt="${p.name}" class="main">
             <img src="${hoverImg}" alt="${p.name}" class="hover">
@@ -254,13 +256,15 @@
           : `<p>KES ${priceOld.toLocaleString()}</p>`}
         <small>In stock: ${p.stock}</small>
         <button class="add-to-cart-btn"
-                data-id="${p._id}"
-                data-name="${p.name}"
-                data-price="${isOffer ? priceNew : priceOld}"
-                data-stock="${p.stock}"
-                data-img="${mainImg}">
-          Add to Cart
-        </button>
+        data-id="${p._id}"
+        data-name="${p.name}"
+        data-price="${isOffer ? priceNew : priceOld}"
+        data-stock="${p.stock}"
+        data-img="${mainImg}"
+          ${p.stock === 0 ? 'disabled' : ''}>
+          ${p.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+      </button>
+
       `;
 
       // 🧲 Add to cart functionality
