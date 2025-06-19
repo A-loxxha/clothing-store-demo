@@ -278,10 +278,19 @@
     init();
 
     async function init() {
-      allProducts = await fetchProducts();
-      populateCategories(allProducts);
-      render(allProducts);
-    }
+  allProducts = await fetchProducts();
+
+  // ✅ Ensure consistent data types
+  allProducts = allProducts.map(p => ({
+    ...p,
+    discount: Number(p.discount),
+    isOffer: Boolean(p.discount > 0) // safer than Boolean(p.isOffer)
+  }));
+
+  populateCategories(allProducts);
+  render(allProducts);
+}
+
 
     applyBtn.addEventListener('click', () => {
       let filtered = [...allProducts];
@@ -317,29 +326,28 @@
       });
     }
 
-    function render(allProducts) {
+function render(allProducts) {
   offersDiv.innerHTML = '';
   browseDiv.innerHTML = '';
 
-  // 🔸 Filter special offers only
   const realOffers = allProducts.filter(p =>
-    p.isOffer === true && typeof p.discount === 'number' && p.discount > 0
+    p.isOffer === true &&
+    typeof p.discount === 'number' &&
+    p.discount > 0
   );
 
-  // 🔸 Everything else goes to browse
-  const nonOffers = allProducts.filter(p =>
-    !p.isOffer || p.discount <= 0 || typeof p.discount !== 'number'
-  );
+  const seen = new Set(realOffers.map(p => p._id));
+  const nonOffers = allProducts.filter(p => !seen.has(p._id));
 
-  // Render Special Offers
-  if (realOffers.length) {
+  // 🔹 Render offers
+  if (realOffers.length > 0) {
     realOffers.forEach(p => offersDiv.appendChild(makeCard(p)));
   } else {
     offersDiv.textContent = 'Currently no offers.';
   }
 
-  // Render Browse Products
-  if (nonOffers.length) {
+  // 🔹 Render browse
+  if (nonOffers.length > 0) {
     nonOffers.forEach(p => browseDiv.appendChild(makeCard(p)));
   } else {
     browseDiv.textContent = 'No products found.';
@@ -348,11 +356,6 @@
   attachCartListeners();
   updateCartBadge();
 }
-
-
-
-
-
 
 
     function makeCard(p) {
