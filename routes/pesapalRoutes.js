@@ -18,27 +18,34 @@ router.post('/mpesa', async (req, res) => {
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
       billing_address: {
-      email_address: shipping.email || 'unknown@example.com',
-      phone_number: shipping.phone || '254700000000',
-      country_code: 'KE',
-      first_name: shipping.name || 'Customer',
-      line_1: shipping.area || 'Nairobi',
-      city: 'Nairobi'
-}
-
+        email_address: shipping.email || 'unknown@example.com',
+        phone_number: shipping.phone || phone || '254700000000',
+        country_code: 'KE',
+        first_name: shipping.name || 'Customer',
+        line_1: shipping.area || 'Nairobi',
+        city: 'Nairobi'
+      }
     };
 
-    console.log('Sending amount:', order.amount, 'Type:', typeof order.amount);
-    console.log('Using notification_id:', process.env.PESAPAL_NOTIFICATION_ID);
-
     const response = await initiatePayment(order);
-    console.log('Pesapal card payment response:', response);
+
+    // ✅ Save order in MongoDB
+    const newOrder = new Order({
+      cart,
+      shipping,
+      phone,
+      paymentMethod: 'mpesa',
+      totalAmount: parseFloat(amount)
+    });
+    await newOrder.save();
+
     res.json({ success: true, ...response });
   } catch (err) {
-  console.error('PESAPAL CARD ERROR:', err.response?.data || err.message);
-  res.status(500).json({ success: false, message: 'Failed to initiate card payment' });
-}
+    console.error('PESAPAL M-PESA ERROR:', err.response?.data || err.message);
+    res.status(500).json({ success: false, message: 'Failed to initiate M-Pesa payment' });
+  }
 });
+
 
 // CARD Route — fix route name to match frontend
 router.post('/initiate', async (req, res) => {
@@ -54,25 +61,34 @@ router.post('/initiate', async (req, res) => {
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
       billing_address: {
-      email_address: shipping.email || 'unknown@example.com',
-      phone_number: shipping.phone || '254700000000',
-      country_code: 'KE',
-      first_name: shipping.name || 'Customer',
-      line_1: shipping.area || 'Nairobi',
-      city: 'Nairobi'
-    }
-
+        email_address: shipping.email || 'unknown@example.com',
+        phone_number: shipping.phone || '254700000000',
+        country_code: 'KE',
+        first_name: shipping.name || 'Customer',
+        line_1: shipping.area || 'Nairobi',
+        city: 'Nairobi'
+      }
     };
 
-    console.log('Sending amount:', order.amount, 'Type:', typeof order.amount);
-
     const response = await initiatePayment(order);
+
+    // ✅ Save order in MongoDB
+    const newOrder = new Order({
+      cart,
+      shipping,
+      phone: shipping.phone,
+      paymentMethod: 'card',
+      totalAmount: parseFloat(amount)
+    });
+    await newOrder.save();
+
     res.json({ success: true, redirect_url: response.redirect_url });
   } catch (err) {
     console.error('PESAPAL CARD ERROR:', err.response?.data || err.message);
     res.status(500).json({ success: false, message: 'Failed to initiate card payment' });
   }
 });
+
 
 // after Pesapal response
 const newOrder = new Order({
