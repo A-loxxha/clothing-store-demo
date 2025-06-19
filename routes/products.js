@@ -20,7 +20,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-const { requireAdmin } = require('./middleware/auth');
 router.post('/', requireAdmin, upload.fields([{ name: 'image1' }, { name: 'image2' }]), async (req, res) => {
 
   try {
