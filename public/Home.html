@@ -317,18 +317,19 @@
       });
     }
 
-    function render(browseList) {
+    function render(allProducts) {
   offersDiv.innerHTML = '';
   browseDiv.innerHTML = '';
 
-  // 🔸 Define real offers
-  console.log("Rendering real offers:");
+  // 🔸 Special Offers: only products explicitly marked as offers with discount > 0
   const realOffers = allProducts.filter(p =>
-  p.isOffer === true &&
-  typeof p.discount === 'number' &&
-  p.discount > 0
-);
+    p.isOffer === true && Number(p.discount) > 0
+  );
 
+  // 🔸 Browse: all products that are NOT on offer
+  const nonOffers = allProducts.filter(p =>
+    !p.isOffer || Number(p.discount) <= 0
+  );
 
   // 🔸 Render offers
   if (realOffers.length) {
@@ -337,16 +338,18 @@
     offersDiv.textContent = 'Currently no offers.';
   }
 
-  // 🔸 Render browse products
-  if (!browseList.length) {
-    browseDiv.textContent = 'No products match.';
+  // 🔸 Render non-offers in browse section
+  if (nonOffers.length) {
+    nonOffers.forEach(p => browseDiv.appendChild(makeCard(p)));
   } else {
-    browseList.forEach(p => browseDiv.appendChild(makeCard(p)));
+    browseDiv.textContent = 'No products found.';
   }
 
   attachCartListeners();
   updateCartBadge();
 }
+
+
 
 
 
