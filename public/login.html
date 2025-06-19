@@ -90,7 +90,7 @@
       <input type="password" id="loginPassword" placeholder="Password" required />
       <button type="submit">Login</button>
     </form>
-
+    <p id="authMessage"></p>
     <h2>Register</h2>
     <form id="registerForm">
       <input type="text" id="registerName" placeholder="Name" required />
@@ -99,7 +99,7 @@
       <button type="submit">Register</button>
     </form>
 
-    <p id="authMessage"></p>
+  
   </div>
 <script>
   const API_URL = 'https://clothing-store-demo.onrender.com'; // ✅ Update if needed
@@ -129,40 +129,72 @@
   });
 
   // Handle login
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
 
+  try {
+    const loginRes = await fetch(`${API_URL}/api/users/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include' // 🔥 send/receive cookies
+    });
+
+    const loginData = await loginRes.json();
+
+    if (!loginRes.ok) {
+      const message = loginRes.status === 403
+        ? '⚠️ Please check your inbox and verify your email to continue.'
+        : loginData.message || 'Login failed';
+      throw new Error(message);
+    }
+
+    // ✅ After successful login, fetch the user info
+    const userRes = await fetch(`${API_URL}/api/users/me`, {
+      method: 'GET',
+      credentials: 'include' // 🍪 send the token cookie
+    });
+
+    const userData = await userRes.json();
+    if (!userRes.ok) throw new Error(userData.message || 'Could not fetch user');
+
+    // Redirect
+    localStorage.setItem('user', JSON.stringify(userData));
+    const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
+    localStorage.removeItem('redirectAfterLogin');
+    window.location.href = redirectTo;
+
+  } catch (err) {
+    if (loginData.message === 'Email not verified') {
+  document.getElementById('authMessage').innerHTML = `
+    ❌ Please check your inbox and verify your email.<br>
+    <button id="resendBtn">Resend Verification Email</button>
+  `;
+  // Attach resend handler
+  document.getElementById('resendBtn').addEventListener('click', async () => {
     try {
-      const loginRes = await fetch(`${API_URL}/api/users/login`, {
+      const resendRes = await fetch(`${API_URL}/api/users/resend-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include' // 🔥 send/receive cookies
+        body: JSON.stringify({ email }),
+        credentials: 'include'
       });
 
-      const loginData = await loginRes.json();
-      if (!loginRes.ok) throw new Error(loginData.message || 'Login failed');
-
-      // ✅ After successful login, fetch the user info
-      const userRes = await fetch(`${API_URL}/api/users/me`, {
-        method: 'GET',
-        credentials: 'include' // 🍪 send the token cookie
-      });
-
-      const userData = await userRes.json();
-      if (!userRes.ok) throw new Error(userData.message || 'Could not fetch user');
-
-      // Redirect
-      localStorage.setItem('user', JSON.stringify(userData));
-      const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
-      localStorage.removeItem('redirectAfterLogin');
-      window.location.href = redirectTo;
-
+      const resendData = await resendRes.json();
+      if (!resendRes.ok) throw new Error(resendData.message);
+      document.getElementById('authMessage').textContent = '📧 Verification email sent.';
     } catch (err) {
       document.getElementById('authMessage').textContent = '❌ ' + err.message;
     }
   });
+
+  return;
+}
+
+  }
+});
+
 </script>
 

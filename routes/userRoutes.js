@@ -75,17 +75,43 @@ router.post('/logout', (req, res) => {
 });
 
 // ── Create Verification Route ──
-router.get('/verify/:token', async (req, res) => {
-  const user = await User.findOne({ verificationToken: req.params.token });
+router.get('/verify-email', async (req, res) => {
+  const { token } = req.query;
+  if (!token) return res.status(400).send('Missing token');
 
-  if (!user) return res.status(400).send('Invalid or expired verification token.');
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+    if (!user) return res.status(404).send('User not found');
 
-  user.isVerified = true;
-  user.verificationToken = undefined;
-  await user.save();
+    user.isVerified = true;
+    await user.save();
 
-  res.send('✅ Email verified! You can now log in.');
+    res.send('✅ Email verified. You can now log in.');
+  } catch (err) {
+    res.status(400).send('Invalid or expired verification token');
+  }
 });
+
+///resend-verification///
+
+router.post('/resend-verification', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email required' });
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.isVerified) return res.status(400).json({ message: 'Email already verified' });
+
+    await sendVerificationEmail(user); // ⬅️ your existing function for sending verification
+    res.json({ message: 'Verification email sent' });
+  } catch (err) {
+    console.error('Resend verification error:', err);
+    res.status(500).json({ message: 'Could not send email' });
+  }
+});
+
 
 
 // ── Get Logged-in User ──
@@ -94,9 +120,11 @@ router.get('/me', requireLogin, async (req, res) => {
     // User is already attached by requireLogin middleware
     const user = req.user;
 
-    if (!user.isVerified) {
-      return res.status(403).json({ message: 'Please verify your email first.' });
-    }
+   if (!user.isVerified) {
+  return res.status(403).json({ message: 'Please check your inbox and verify your email to continue.' });
+}
+
+
 
     res.set('Cache-Control', 'no-store');
     return res.json(user); // No password included due to .select('-password') in middleware
