@@ -102,7 +102,7 @@
   
   </div>
 <script>
-  const API_URL = 'https://clothing-store-demo.onrender.com'; // ✅ Update if needed
+  const API_URL = 'https://clothing-store-demo.onrender.com';
 
   // Handle registration
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
@@ -129,72 +129,79 @@
   });
 
   // Handle login
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
 
-  try {
-    const loginRes = await fetch(`${API_URL}/api/users/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include' // 🔥 send/receive cookies
-    });
+    let loginData = null;
 
-    const loginData = await loginRes.json();
-
-    if (!loginRes.ok) {
-      const message = loginRes.status === 403
-        ? '⚠️ Please check your inbox and verify your email to continue.'
-        : loginData.message || 'Login failed';
-      throw new Error(message);
-    }
-
-    // ✅ After successful login, fetch the user info
-    const userRes = await fetch(`${API_URL}/api/users/me`, {
-      method: 'GET',
-      credentials: 'include' // 🍪 send the token cookie
-    });
-
-    const userData = await userRes.json();
-    if (!userRes.ok) throw new Error(userData.message || 'Could not fetch user');
-
-    // Redirect
-    localStorage.setItem('user', JSON.stringify(userData));
-    const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
-    localStorage.removeItem('redirectAfterLogin');
-    window.location.href = redirectTo;
-
-  } catch (err) {
-    if (loginData.message === 'Email not verified') {
-  document.getElementById('authMessage').innerHTML = `
-    ❌ Please check your inbox and verify your email.<br>
-    <button id="resendBtn">Resend Verification Email</button>
-  `;
-  // Attach resend handler
-  document.getElementById('resendBtn').addEventListener('click', async () => {
     try {
-      const resendRes = await fetch(`${API_URL}/api/users/resend-verification`, {
+      const loginRes = await fetch(`${API_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password }),
         credentials: 'include'
       });
 
-      const resendData = await resendRes.json();
-      if (!resendRes.ok) throw new Error(resendData.message);
-      document.getElementById('authMessage').textContent = '📧 Verification email sent.';
+      loginData = await loginRes.json();
+
+      if (!loginRes.ok) {
+        // Check for unverified email case
+        if (loginData.message === 'Email not verified') {
+          document.getElementById('authMessage').innerHTML = `
+            ⚠️ Please verify your email to continue.<br>
+            <button id="resendBtn" style="
+              background-color: #fff; 
+              color: var(--main-color); 
+              border: 1px solid var(--main-color); 
+              padding: 8px 14px; 
+              border-radius: 20px; 
+              margin-top: 10px;
+              cursor: pointer;
+            ">Resend Verification Email</button>
+          `;
+
+          document.getElementById('resendBtn').addEventListener('click', async () => {
+            try {
+              const resendRes = await fetch(`${API_URL}/api/users/resend-verification`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+                credentials: 'include'
+              });
+
+              const resendData = await resendRes.json();
+              if (!resendRes.ok) throw new Error(resendData.message);
+              document.getElementById('authMessage').textContent = '📧 Verification email sent.';
+            } catch (err) {
+              document.getElementById('authMessage').textContent = '❌ ' + err.message;
+            }
+          });
+
+          return; // Stop login process
+        }
+
+        throw new Error(loginData.message || 'Login failed');
+      }
+
+      // ✅ Login successful → Fetch user info
+      const userRes = await fetch(`${API_URL}/api/users/me`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      const userData = await userRes.json();
+      if (!userRes.ok) throw new Error(userData.message || 'Could not fetch user');
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      const redirectTo = localStorage.getItem('redirectAfterLogin') || 'Home.html';
+      localStorage.removeItem('redirectAfterLogin');
+      window.location.href = redirectTo;
+
     } catch (err) {
       document.getElementById('authMessage').textContent = '❌ ' + err.message;
     }
   });
-
-  return;
-}
-
-  }
-});
-
 </script>
 
