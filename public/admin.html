@@ -586,11 +586,38 @@
               </ul>
             </td>
             <td>KES ${order.totalAmount?.toFixed(2)}</td>
-            <td>${order.status}</td>
+            <td>
+            <select class="order-status" data-id="${order._id}">
+              ${['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(statusOption =>
+                `<option value="${statusOption}" ${statusOption === order.status ? 'selected' : ''}>${statusOption}</option>`
+              ).join('')}
+            </select>
+          </td>
+
             <td>${new Date(order.createdAt).toLocaleString()}</td>
           `;
           tbody.appendChild(tr);
         });
+
+        document.querySelectorAll('.order-status').forEach(select => {
+          select.addEventListener('change', async (e) => {
+            const orderId = e.target.dataset.id;
+            const newStatus = e.target.value;
+            try {
+              const res = await fetch(`https://clothing-store-demo.onrender.com/api/orders/${orderId}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+              });
+              if (!res.ok) throw new Error('Failed to update status');
+              alert('✅ Order status updated!');
+            } catch (err) {
+              console.error('Status update failed:', err);
+              alert('❌ Could not update order status.');
+            }
+          });
+        });
+        
       } catch (err) {
         console.error('Error loading orders:', err);
         tbody.innerHTML = '<tr><td colspan="8">Failed to load orders.</td></tr>';

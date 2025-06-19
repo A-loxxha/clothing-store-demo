@@ -9,15 +9,16 @@ const orderSchema = new mongoose.Schema({
     img: String 
   }],
   shipping: {
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    area: { type: String, required: true } // e.g., "CBD", "Westlands"
+    name: String,
+    email: String,
+    phone: String,
+    area: String // Delivery location in Nairobi
   },
-  paymentMethod: { type: String, default: 'card' },
+  paymentMethod: String, // "card", "mpesa", etc.
   totalAmount: Number,
   status: {
     type: String,
+    enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
     default: 'Pending'
   },
   createdAt: {
