@@ -242,10 +242,7 @@
       }
     });
 
-    // 🔐 Auth Check + Display Name
-    checkLogin();
-
-
+    
     // 🚪 Logout
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await fetch('https://clothing-store-demo.onrender.com/api/users/logout', {
