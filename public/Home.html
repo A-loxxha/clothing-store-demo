@@ -138,11 +138,6 @@
   </section>
 
   <section>
-    <h1 class="heading"><span>Special</span> offers</h1>
-    <div id="offers" class="product-grid"></div>
-  </section>
-
-  <section>
     <h1 class="heading">Browse All Products</h1>
     <section id="filters" class="filters">
       <select id="categoryFilter"><option value="">All categories</option></select>
@@ -279,6 +274,10 @@
 
     async function init() {
   allProducts = await fetchProducts();
+  populateCategories(allProducts); // if categories still needed
+  render(allProducts);
+}
+
 
   // 🔁 Normalize data types
   allProducts = allProducts.map(p => ({
@@ -327,32 +326,20 @@
       });
     }
 
-function render(browseList) {
-  offersDiv.innerHTML = '';
+function render(allProducts) {
   browseDiv.innerHTML = '';
 
-  // 🔍 Strict filter for real offers
-  const realOffers = allProducts.filter(p =>
-    Boolean(p.discount) && Number(p.discount) > 0
-  );
-
-  // 🔸 Render Offers
-  if (realOffers.length > 0) {
-    realOffers.forEach(p => offersDiv.appendChild(makeCard(p)));
+  // 🔸 Render all products
+  if (allProducts.length) {
+    allProducts.forEach(p => browseDiv.appendChild(makeCard(p)));
   } else {
-    offersDiv.textContent = 'Currently no offers.';
-  }
-
-  // 🔸 Render Browse List (filtered products)
-  if (browseList.length > 0) {
-    browseList.forEach(p => browseDiv.appendChild(makeCard(p)));
-  } else {
-    browseDiv.textContent = 'No products match.';
+    browseDiv.textContent = 'No products found.';
   }
 
   attachCartListeners();
   updateCartBadge();
 }
+
 
 
 
