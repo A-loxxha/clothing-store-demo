@@ -66,15 +66,21 @@ router.post('/', upload.fields([{ name: 'image1' }, { name: 'image2' }]), async 
 
 router.put('/:id', async (req, res) => {
   try {
+    // 🔥 Inject logic to set isOffer automatically
+    const discount = Number(req.body.discount);
+    req.body.isOffer = discount > 0;
+
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
+
     if (!updated) return res.status(404).json({ error: 'Product not found' });
     res.json(updated);
   } catch (err) {
     res.status(500).json({ error: 'Update failed' });
   }
 });
+
 
 router.delete('/:id', async (req, res) => {
   try {

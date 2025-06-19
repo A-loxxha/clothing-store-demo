@@ -387,6 +387,8 @@
         if (isNaN(disc) || disc < 0) disc = 0;
         if (disc > 100) disc = 100;
         formData.set('discount', disc);
+        formData.set('isOffer', disc > 0 ? 'true' : 'false');
+
 
         const img1 = document.getElementById('image1');
         const img2 = document.getElementById('image2');

@@ -1,4 +1,3 @@
-// models/Product.js
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
@@ -16,8 +15,14 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  imageUrl:       { type: String, default: '' }, // main image
-  hoverImageUrl:  { type: String, default: '' }  // second image (on hover)
+  imageUrl:       { type: String, default: '' },
+  hoverImageUrl:  { type: String, default: '' }
 }, { timestamps: true });
+
+// ✅ Auto-calculate isOffer
+productSchema.pre('save', function (next) {
+  this.isOffer = this.discount > 0;
+  next();
+});
 
 module.exports = mongoose.models.Product || mongoose.model('Product', productSchema);

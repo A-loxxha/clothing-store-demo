@@ -321,24 +321,24 @@
   offersDiv.innerHTML = '';
   browseDiv.innerHTML = '';
 
-  // 🔸 Special Offers: only products explicitly marked as offers with discount > 0
+  // 🔸 Filter special offers only
   const realOffers = allProducts.filter(p =>
-    p.isOffer === true && Number(p.discount) > 0
+    p.isOffer === true && typeof p.discount === 'number' && p.discount > 0
   );
 
-  // 🔸 Browse: all products that are NOT on offer
+  // 🔸 Everything else goes to browse
   const nonOffers = allProducts.filter(p =>
-    !p.isOffer || Number(p.discount) <= 0
+    !p.isOffer || p.discount <= 0 || typeof p.discount !== 'number'
   );
 
-  // 🔸 Render offers
+  // Render Special Offers
   if (realOffers.length) {
     realOffers.forEach(p => offersDiv.appendChild(makeCard(p)));
   } else {
     offersDiv.textContent = 'Currently no offers.';
   }
 
-  // 🔸 Render non-offers in browse section
+  // Render Browse Products
   if (nonOffers.length) {
     nonOffers.forEach(p => browseDiv.appendChild(makeCard(p)));
   } else {
@@ -353,73 +353,72 @@
 
 
 
+
+
     function makeCard(p) {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.cursor = 'pointer';
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.cursor = 'pointer';
 
-      const baseURL = 'https://clothing-store-demo.onrender.com';
+  const baseURL = 'https://clothing-store-demo.onrender.com';
 
-      const mainImg = p.imageUrl.startsWith('http')
-        ? p.imageUrl.replace('http://', 'https://')
-        : `${baseURL}${p.imageUrl}`;
+  const mainImg = p.imageUrl
+    ? (p.imageUrl.startsWith('http') ? p.imageUrl.replace('http://', 'https://') : `${baseURL}${p.imageUrl}`)
+    : 'fallback.jpg';  // 🔁 fallback image
 
-      const hoverImg = p.hoverImageUrl
-        ? (p.hoverImageUrl.startsWith('http')
-          ? p.hoverImageUrl.replace('http://', 'https://')
-          : `${baseURL}${p.hoverImageUrl}`)
-        : mainImg;
+  const hoverImg = p.hoverImageUrl
+    ? (p.hoverImageUrl.startsWith('http') ? p.hoverImageUrl.replace('http://', 'https://') : `${baseURL}${p.hoverImageUrl}`)
+    : mainImg;
 
-      const isOffer = p.isOffer && Number(p.discount) > 0;
-      const discount = Number(p.discount) || 0;
-      const priceOld = Number(p.price);
-      const priceNew = (priceOld * (100 - discount) / 100).toFixed(2);
+  const isOffer = p.isOffer && Number(p.discount) > 0;
+  const discount = Number(p.discount) || 0;
+  const priceOld = Number(p.price);
+  const priceNew = (priceOld * (100 - discount) / 100).toFixed(2);
 
-      card.innerHTML = `
-        <div class="img-wrapper-container" style="position:relative">
-          ${isOffer ? `<span class="discount-badge">-${discount}%</span>` : ''}
-          <div class="img-wrapper">
-            <img src="${mainImg}" alt="${p.name}" class="main">
-            <img src="${hoverImg}" alt="${p.name}" class="hover">
-          </div>
-        </div>
-        <h3>${p.name}</h3>
-        ${isOffer
-          ? `<p><span style="text-decoration:line-through;color:#888;">
-              KES ${priceOld.toLocaleString()}
-            </span><br>
-            <strong style="color:#ce8e1a;">KES ${priceNew}</strong></p>`
-          : `<p>KES ${priceOld.toLocaleString()}</p>`}
-        <small>In stock: ${p.stock}</small>
-        <button class="add-to-cart-btn"
-                data-id="${p._id}"
-                data-name="${p.name}"
-                data-price="${isOffer ? priceNew : priceOld}"
-                data-stock="${p.stock}"
-                data-img="${mainImg}">
-          Add to Cart
-        </button>
-      `;
+  card.innerHTML = `
+    <div class="img-wrapper-container" style="position:relative">
+      ${isOffer ? `<span class="discount-badge">-${discount}%</span>` : ''}
+      <div class="img-wrapper">
+        <img src="${mainImg}" alt="${p.name}" class="main">
+        <img src="${hoverImg}" alt="${p.name}" class="hover">
+      </div>
+    </div>
+    <h3>${p.name}</h3>
+    ${isOffer
+      ? `<p><span style="text-decoration:line-through;color:#888;">KES ${priceOld.toLocaleString()}</span><br><strong style="color:#ce8e1a;">KES ${priceNew}</strong></p>`
+      : `<p>KES ${priceOld.toLocaleString()}</p>`}
+    <small>In stock: ${p.stock}</small>
+    <button class="add-to-cart-btn"
+            data-id="${p._id}"
+            data-name="${p.name}"
+            data-price="${isOffer ? priceNew : priceOld}"
+            data-stock="${p.stock}"
+            data-img="${mainImg}">
+      Add to Cart
+    </button>
+  `;
 
-      card.addEventListener('click', (e) => {
-        if (e.target.classList.contains('add-to-cart-btn')) return;
-        const modal = document.getElementById('productModal');
-        const body = document.getElementById('modal-body');
-        modal.style.display = 'block';
-        body.innerHTML = `
-          <h2>${p.name}</h2>
-          <img src="${mainImg}" alt="${p.name}" style="width:100%;border-radius:10px;max-height:300px;object-fit:cover;margin-bottom:1rem;">
-          <p><strong>Price:</strong> ${isOffer
-            ? `KES <del>${priceOld}</del> <span style="color:#ce8e1a;">KES ${priceNew}</span>`
-            : `KES ${priceOld}`}</p>
-          <p><strong>Category:</strong> ${p.category}</p>
-          <p><strong>In stock:</strong> ${p.stock}</p>
-          ${p.description ? `<p>${p.description}</p>` : ''}
-        `;
-      });
+  // ✅ Make the entire card (except button) trigger modal
+  card.addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-to-cart-btn')) return;
+    const modal = document.getElementById('productModal');
+    const body = document.getElementById('modal-body');
+    modal.style.display = 'block';
+    body.innerHTML = `
+      <h2>${p.name}</h2>
+      <img src="${mainImg}" alt="${p.name}" style="width:100%;border-radius:10px;max-height:300px;object-fit:cover;margin-bottom:1rem;">
+      <p><strong>Price:</strong> ${isOffer
+        ? `KES <del>${priceOld}</del> <span style="color:#ce8e1a;">KES ${priceNew}</span>`
+        : `KES ${priceOld}`}</p>
+      <p><strong>Category:</strong> ${p.category}</p>
+      <p><strong>In stock:</strong> ${p.stock}</p>
+      ${p.description ? `<p>${p.description}</p>` : ''}
+    `;
+  });
 
-      return card;
-    }
+  return card;
+}
+
 
     function attachCartListeners() {
       document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
