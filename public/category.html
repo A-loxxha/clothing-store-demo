@@ -117,12 +117,10 @@
     <div class="links">
         <a href="return-policy.html">Return Policy</a>
     </div>
-    <div class="credit"><span id="year"></span> Mabel statement. All rights reserved.</div>
+    <div class="credit">Mabel <span>Statement</span> | all rights reserved</div>
   </section>
   
-  <script>// global.js
-  document.getElementById('year').textContent = new Date().getFullYear();
-  
+  <script>// global.js  
   function updateCartBadge() {
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
   const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
