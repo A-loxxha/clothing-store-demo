@@ -440,6 +440,7 @@ function render(allProducts) {
 
       localStorage.setItem('cart', JSON.stringify(cart));
       updateCartBadge();
+      showToast(`Added "${name}" to cart`);
     });
   }
 
@@ -448,36 +449,6 @@ function render(allProducts) {
 
 
 
-    function attachCartListeners() {
-      document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.id;
-          const name = btn.dataset.name;
-          const price = parseFloat(btn.dataset.price);
-          const stock = parseInt(btn.dataset.stock);
-          const img = btn.dataset.img;
-
-          let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-          let item = cart.find(i => i.id === id);
-
-          if (item) {
-            if (item.quantity < stock) {
-              item.quantity++;
-              showToast(`Added another "${name}"`);
-            } else {
-              showToast(`Only ${stock} left in stock.`);
-              return;
-            }
-          } else {
-            cart.push({ id, name, price, stock, quantity: 1, img });
-            showToast(`Added "${name}" to cart`);
-          }
-
-          localStorage.setItem('cart', JSON.stringify(cart));
-          updateCartBadge();
-        });
-      });
-    }
 
     function showToast(msg) {
       const toast = document.createElement('div');
