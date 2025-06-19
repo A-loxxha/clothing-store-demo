@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { requireLogin, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key'; // ✅ Now consistent
@@ -68,7 +69,8 @@ router.post('/logout', (req, res) => {
 
 
 // ── Get Logged-in User ──
-router.get('/me', async (req, res) => {
+router.get('/me', requireLogin, async (req, res) => {
+
   try {
     console.log('🍪 Token from cookie:', req.cookies.token);
     const token = req.cookies.token;
@@ -90,7 +92,6 @@ router.get('/me', async (req, res) => {
 
 ///////admin/////////
 
-const requireAdmin = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
@@ -105,11 +106,11 @@ const requireAdmin = async (req, res, next) => {
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid token' });
-  }
-};
+  };
 
 // ✅ Example admin-only route
 router.get('/admin-check', requireAdmin, (req, res) => {
+
   res.json({ message: 'Welcome, admin!' });
 });
 

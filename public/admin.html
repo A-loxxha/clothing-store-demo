@@ -393,6 +393,26 @@
   
   <script>
   window.addEventListener('DOMContentLoaded', () => {
+
+
+        // 🔐 Ensure only logged-in admins can access this page
+    fetch('https://clothing-store-demo.onrender.com/api/users/me', {
+      credentials: 'include'
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Not logged in');
+        return res.json();
+      })
+      .then(user => {
+        if (!user.isAdmin) {
+          alert('Access denied. Admins only.');
+          window.location.href = 'unauthorized.html'; // or home.html
+        }
+      })
+      .catch(() => {
+        window.location.href = 'login.html';
+      });
+
     const API_BASE = 'https://clothing-store-demo.onrender.com/api/products';
     const form = document.getElementById('productForm');
     const tableBody = document.querySelector('#productsTable tbody');

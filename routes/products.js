@@ -4,6 +4,8 @@ const Product = require('../models/product');
 const multer = require('multer');
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
+const { requireAdmin } = require('../middleware/auth');
+
 
 // Multer for file parsing (memory storage)
 const storage = multer.memoryStorage();
@@ -18,7 +20,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', upload.fields([{ name: 'image1' }, { name: 'image2' }]), async (req, res) => {
+const { requireAdmin } = require('./middleware/auth');
+router.post('/', requireAdmin, upload.fields([{ name: 'image1' }, { name: 'image2' }]), async (req, res) => {
+
   try {
     const { name, price, discount, stock, category } = req.body;
     const files = req.files;
@@ -69,7 +73,8 @@ router.post('/', upload.fields([{ name: 'image1' }, { name: 'image2' }]), async 
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAdmin, async (req, res) => {
+
   try {
     // 🔥 Inject logic to set isOffer automatically
     const discount = Number(req.body.discount);
@@ -87,7 +92,8 @@ router.put('/:id', async (req, res) => {
 });
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
+
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ error: 'Not found' });
