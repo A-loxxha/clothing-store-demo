@@ -245,20 +245,6 @@
     // 🔐 Auth Check + Display Name
     checkLogin();
 
-    async function checkLogin() {
-      try {
-        const res = await fetch('https://clothing-store-demo.onrender.com/api/users/me', {
-          method: 'GET',
-          credentials: 'include'
-        });
-
-        if (!res.ok) throw new Error('Unauthorized');
-        const data = await res.json();
-        document.getElementById('userDisplayName').textContent = data.name;
-      } catch (err) {
-        window.location.href = 'login.html';
-      }
-    }
 
     // 🚪 Logout
     document.getElementById('logoutBtn').addEventListener('click', async () => {
