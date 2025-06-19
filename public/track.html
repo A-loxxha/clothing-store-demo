@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Track Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="Styles.css" />
+  <style>
+    body { padding: 2rem; font-family: 'Poppins', sans-serif; background: #f7f7f7; }
+    h2 { text-align: center; color: #ceb974; }
+    .track-container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    input { width: 100%; padding: 12px; font-size: 1rem; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 12px; background: #ceb974; color: white; border: none; width: 100%; border-radius: 6px; font-size: 1.2rem; cursor: pointer; }
+    button:hover { background: black; color: #ceb974; }
+    .order { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-top: 15px; background: #fafafa; }
+    .order ul { margin: 5px 0 0 20px; }
+  </style>
+</head>
+<body>
+  <div class="track-container">
+    <h2>Track Your Order</h2>
+    <input type="tel" id="phone" placeholder="Enter your phone number e.g. 0111xxxxxx" />
+    <button onclick="trackOrder()">Track</button>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    async function trackOrder() {
+      const phoneInput = document.getElementById('phone');
+      const phoneRaw = phoneInput.value.trim();
+
+      // Normalize phone
+      const phone = phoneRaw.replace(/^(\+254|254|0)/, '254').replace(/\s+/g, '');
+      if (!/^254[17][0-9]{8}$/.test(phone)) {
+        alert('Please enter a valid Kenyan mobile number');
+        return;
+      }
+
+      const resDiv = document.getElementById('results');
+      resDiv.innerHTML = '<p>Loading...</p>';
+
+      try {
+        const res = await fetch(`https://clothing-store-demo.onrender.com/api/orders/track?phone=${phone}`);
+        const orders = await res.json();
+
+        if (!orders.length) {
+          resDiv.innerHTML = '<p>No orders found for this number.</p>';
+          return;
+        }
+
+        resDiv.innerHTML = '';
+        orders.forEach(order => {
+          const div = document.createElement('div');
+          div.className = 'order';
+          div.innerHTML = `
+            <strong>Status:</strong> ${order.status}<br/>
+            <strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}<br/>
+            <strong>Total:</strong> KES ${order.totalAmount.toFixed(2)}<br/>
+            <strong>Items:</strong>
+            <ul>${order.cart.map(i => `<li>${i.name} x${i.quantity}</li>`).join('')}</ul>
+          `;
+          resDiv.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error('Tracking error:', err);
+        resDiv.innerHTML = '<p>Failed to fetch orders. Try again later.</p>';
+      }
+    }
+  </script>
+</body>
+</html>

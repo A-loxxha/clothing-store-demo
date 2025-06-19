@@ -12,6 +12,20 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/orders/track?phone=2547XXXXXXX
+router.get('/track', async (req, res) => {
+  const phone = req.query.phone;
+  if (!phone) return res.status(400).json({ error: 'Phone number is required' });
+
+  try {
+    const orders = await Order.find({ 'shipping.phone': phone }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    console.error('Tracking error:', err);
+    res.status(500).json({ error: 'Failed to fetch orders' });
+  }
+});
+
 // Update status
 router.put('/:id/status', async (req, res) => {
   const { status } = req.body;
