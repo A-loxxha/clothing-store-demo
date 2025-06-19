@@ -8,6 +8,7 @@ const path     = require('path');
 const { initiatePayment } = require('./pesapal');
 
 
+
 // ── Routes ──
 const productRoutes = require('./routes/products');
 const userRoutes    = require('./routes/userRoutes'); // 👈 Added user auth routes
@@ -33,6 +34,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes); // 👈 Add user routes under /api/users
 app.use('/api/checkout', checkoutRoutes); // 👈 Add this below other app.use()
 app.use('/api/pesapal', pesapalRoutes);
+app.use('/api/orders', require('./routes/orders'));
+
 
 app.post('/api/pay', async (req, res) => {
   const { name, email, phone, amount, paymentMethod } = req.body;

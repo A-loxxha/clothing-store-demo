@@ -9,14 +9,12 @@ const orderSchema = new mongoose.Schema({
     img: String 
   }],
   shipping: {
-    name: String,
-    address: String,
-    city: String,
-    postal: String,
-    country: String
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    area: { type: String, required: true } // e.g., "CBD", "Westlands"
   },
-  paymentMethod: String,
-  phone: String,
+  paymentMethod: { type: String, default: 'card' },
   totalAmount: Number,
   status: {
     type: String,

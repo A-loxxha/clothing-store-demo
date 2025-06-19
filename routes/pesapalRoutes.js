@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authenticate, initiatePayment } = require('../pesapal');
 const axios = require('axios');
+const Order = require('../models/order');
 
 // M-PESA Route
 router.post('/mpesa', async (req, res) => {
@@ -17,13 +18,14 @@ router.post('/mpesa', async (req, res) => {
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
       billing_address: {
-        email_address: 'customer@example.com',
-        phone_number: phone,
-        country_code: 'KE',
-        first_name: shipping.name || 'Customer',
-        line_1: shipping.address,
-        city: shipping.city
-      }
+      email_address: shipping.email || 'unknown@example.com',
+      phone_number: shipping.phone || '254700000000',
+      country_code: 'KE',
+      first_name: shipping.name || 'Customer',
+      line_1: shipping.area || 'Nairobi',
+      city: 'Nairobi'
+}
+
     };
 
     console.log('Sending amount:', order.amount, 'Type:', typeof order.amount);
@@ -52,13 +54,14 @@ router.post('/initiate', async (req, res) => {
       callback_url: 'https://yourdomain.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
       billing_address: {
-        email_address: 'customer@example.com',
-        phone_number: '254700000000', // Or get from shipping if available
-        country_code: 'KE',
-        first_name: shipping.name || 'Customer',
-        line_1: shipping.address,
-        city: shipping.city
-      }
+      email_address: shipping.email || 'unknown@example.com',
+      phone_number: shipping.phone || '254700000000',
+      country_code: 'KE',
+      first_name: shipping.name || 'Customer',
+      line_1: shipping.area || 'Nairobi',
+      city: 'Nairobi'
+    }
+
     };
 
     console.log('Sending amount:', order.amount, 'Type:', typeof order.amount);
@@ -70,5 +73,15 @@ router.post('/initiate', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to initiate card payment' });
   }
 });
+
+// after Pesapal response
+const newOrder = new Order({
+  cart,
+  shipping,
+  paymentMethod: 'card',
+  totalAmount: parseFloat(amount),
+});
+
+await newOrder.save();
 
 module.exports = router;

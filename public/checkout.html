@@ -148,35 +148,29 @@
   <div class="checkout-container">
     <h2>Checkout</h2>
     <form id="checkout-form">
-      <div>
-        <label>Full Name</label>
-        <input type="text" id="fullName" required />
-      </div>
-      <div>
-        <label>Address</label>
-        <input type="text" id="address" required />
-      </div>
-      <div>
-        <label>City</label>
-        <input type="text" id="city" required />
-      </div>
-      <div>
-        <label>Postal Code</label>
-        <input type="text" id="postal" required />
-      </div>
-      <div>
-        <label>Country</label>
-        <select id="country" required>
-          <option value="">Select Country</option>
-          <option>Kenya</option>
-          <option>Uganda</option>
-          <option>Tanzania</option>
-        </select>
-      </div>
-      <div>
-        <label>Delivery Area (within Nairobi)</label>
-        <input type="text" id="deliveryArea" placeholder="e.g. CBD, Westlands" required />
-      </div>
+  <div>
+    <label>Full Name</label>
+    <input type="text" id="fullName" required autocomplete="name" />
+  </div>
+
+  <div>
+    <label>Email Address</label>
+    <input type="email" id="email" required autocomplete="email" />
+  </div>
+
+  <div>
+    <label>Phone Number</label>
+    <input type="tel" id="phone" required pattern="\\+?[0-9]{7,15}" placeholder="+254712345678" />
+  </div>
+
+  <div>
+    <label>Delivery Location (within Nairobi)</label>
+    <input type="text" id="deliveryArea" placeholder="e.g. CBD, Westlands, Kilimani" required />
+  </div>
+
+  <button class="btn" type="submit">Place Order</button>
+</form>
+
 
       <input type="hidden" name="payment_method" value="card" />
 
@@ -275,13 +269,13 @@ async function checkLogin() {
         const form = e.target;
 
         const shipping = {
-          name: form.fullName.value,
-          address: form.address.value,
-          city: form.city.value,
-          postal: form.postal.value,
-          country: form.country.value,
-          area: form.deliveryArea.value
-        };
+    name: form.fullName.value.trim(),
+    email: form.email.value.trim(),
+    phone: form.phone.value.trim(),
+    area: form.deliveryArea.value.trim()
+  };
+
+
 
         const totalAmount = cart.reduce((sum, item) => {
           return sum + parseFloat(item.price) * parseInt(item.quantity);

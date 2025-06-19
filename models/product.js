@@ -17,8 +17,8 @@ const productSchema = new mongoose.Schema({
   },
   imageUrl:            { type: String, default: '' },
   hoverImageUrl:       { type: String, default: '' },
-  imagePublicId:       { type: String, default: '' },  // ✅ for Cloudinary deletion
-  hoverImagePublicId:  { type: String, default: '' }   // ✅ for Cloudinary deletion
+  imagePublicId:       { type: String, default: '' }, 
+  hoverImagePublicId:  { type: String, default: '' }  
 }, { timestamps: true });
 
 // ✅ Automatically set isOffer before saving
