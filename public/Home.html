@@ -242,7 +242,27 @@
       }
     });
 
-    
+    // 🔐 Auth Check + Display Name
+    checkLogin();
+    async function checkLogin() {
+    try {
+      const res = await fetch(`${API_BASE}/api/users/me`, {
+        credentials: 'include'
+      });
+
+      if (res.ok) {
+        const user = await res.json();
+        const welcome = document.getElementById('welcomeUser');
+        welcome.textContent = `Welcome, ${user.name}`;
+        welcome.style.display = 'inline';
+      }
+    } catch (err) {
+      console.log('User not logged in.');
+      // Do not redirect
+    }
+  }
+
+
     // 🚪 Logout
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await fetch('https://clothing-store-demo.onrender.com/api/users/logout', {
