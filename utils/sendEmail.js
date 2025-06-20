@@ -13,9 +13,10 @@ const sendVerificationEmail = async (to, token) => {
 
 
   await transporter.sendMail({
-    from: `"Your Store" <${process.env.EMAIL_USER}>`,
+    from: `"Mabel Statement" <${process.env.EMAIL_USER}>`,
     to,
     subject: 'Verify your email',
+    text: `Please verify your email by clicking this link: ${verifyUrl}`,
    html: `
   <h3>Verify your account</h3>
   <p>Thanks for signing up with Mabel Statement. Click the button below to verify your email address:</p>
