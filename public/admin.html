@@ -353,14 +353,16 @@
     <input type="number" id="price" name="price" step="0.01" placeholder="e.g. 1500" required />
 
     <label for="category">Category</label>
-<select id="category" name="category" required>
-  <option value="">-- Select a category --</option>
-  <option value="Mini Dress">Mini Dress</option>
-  <option value="Maxi Dress">Maxi Dress</option>
-  <option value="Midi Dress">Midi Dress</option>
-  <option value="Perfume">Perfume</option>
-  <option value="Accessory">Accessory</option>
-</select>
+<input list="categoryOptions" id="category" name="category" placeholder="e.g. Mini Dress, Perfume" required />
+
+<datalist id="categoryOptions">
+  <option value="Mini Dress">
+  <option value="Maxi Dress">
+  <option value="Midi Dress">
+  <option value="Perfume">
+  <option value="Accessory">
+</datalist>
+
 
 
     <label for="stock">Stock Quantity</label>
