@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
   verificationToken: String, // Optional if using JWT
-  resetPasswordToken: String,
-  resetPasswordExpires: Date
+  resetToken: String,              // ✅ Add this
+  resetTokenExpires: Date 
 });
 
 module.exports = mongoose.model('User', userSchema);
