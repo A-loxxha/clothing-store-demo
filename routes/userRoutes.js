@@ -75,25 +75,30 @@ router.post('/logout', (req, res) => {
 });
 
 // ── Create Verification Route ──
-router.get('/verify-email', async (req, res) => {
-  const { token } = req.query;
-  if (!token) return res.status(400).send('Missing token');
+router.get('/verify/:token', async (req, res) => {
+  const { token } = req.params;
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.userId);
-    if (!user) return res.status(404).send('User not found');
+    const user = await User.findOne({ verificationToken: token });
+    if (!user) return res.status(400).send('Invalid or expired verification token');
 
     user.isVerified = true;
+    user.verificationToken = undefined;
     await user.save();
 
-    res.send('✅ Email verified. You can now log in.');
+    res.send(`
+      <h2>Email Verified ✅</h2>
+      <p>You can now <a href="/login.html">log in</a>.</p>
+    `);
   } catch (err) {
-    res.status(400).send('Invalid or expired verification token');
+    console.error('Verification error:', err);
+    res.status(500).send('Server error during verification');
   }
 });
 
 ///resend-verification///
+
+const crypto = require('crypto');
 
 router.post('/resend-verification', async (req, res) => {
   const { email } = req.body;
@@ -104,13 +109,18 @@ router.post('/resend-verification', async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
     if (user.isVerified) return res.status(400).json({ message: 'Email already verified' });
 
-    await sendVerificationEmail(user); // ⬅️ your existing function for sending verification
+    const newToken = crypto.randomBytes(32).toString('hex');
+    user.verificationToken = newToken;
+    await user.save();
+
+    await sendVerificationEmail(user.email, newToken); // ✅ Correct usage
     res.json({ message: 'Verification email sent' });
   } catch (err) {
     console.error('Resend verification error:', err);
     res.status(500).json({ message: 'Could not send email' });
   }
 });
+
 
 
 
