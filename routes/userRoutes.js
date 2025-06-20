@@ -98,8 +98,6 @@ router.get('/verify/:token', async (req, res) => {
 
 ///resend-verification///
 
-const crypto = require('crypto');
-
 router.post('/resend-verification', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: 'Email required' });
