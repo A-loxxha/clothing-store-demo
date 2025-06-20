@@ -410,8 +410,11 @@ function render(allProducts) {
         : `KES ${priceOld}`}</p>
       <p><strong>Category:</strong> ${p.category}</p>
       <p><strong>In stock:</strong> ${p.stock}</p>
+      <p><strong>Size:</strong> ${p.size || 'N/A'}</p>
+      <p><strong>Color:</strong> ${p.color || 'N/A'}</p>
       ${p.description ? `<p>${p.description}</p>` : ''}
-    `;
+`;
+
   });
 
   // Attach cart functionality only if in stock

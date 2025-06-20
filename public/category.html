@@ -315,15 +315,18 @@
         const body = document.getElementById('modal-body');
         modal.style.display = 'block';
         body.innerHTML = `
-          <h2>${p.name}</h2>
-          <img src="${mainImg}" alt="${p.name}" style="width:100%;border-radius:10px;max-height:300px;object-fit:cover;margin-bottom:1rem;">
-          <p><strong>Price:</strong> ${isOffer
-            ? `KES <del>${priceOld}</del> <span style="color:#ce8e1a;">KES ${priceNew}</span>`
-            : `KES ${priceOld}`}</p>
-          <p><strong>Category:</strong> ${p.category}</p>
-          <p><strong>In stock:</strong> ${p.stock}</p>
-          ${p.description ? `<p>${p.description}</p>` : ''}
-        `;
+        <h2>${p.name}</h2>
+        <img src="${mainImg}" alt="${p.name}" style="width:100%;border-radius:10px;max-height:300px;object-fit:cover;margin-bottom:1rem;">
+        <p><strong>Price:</strong> ${isOffer
+          ? `KES <del>${priceOld}</del> <span style="color:#ce8e1a;">KES ${priceNew}</span>`
+          : `KES ${priceOld}`}</p>
+        <p><strong>Category:</strong> ${p.category}</p>
+        <p><strong>In stock:</strong> ${p.stock}</p>
+        <p><strong>Size:</strong> ${p.size || 'N/A'}</p>
+        <p><strong>Color:</strong> ${p.color || 'N/A'}</p>
+        ${p.description ? `<p>${p.description}</p>` : ''}
+      `;
+
       });
 
       return card;
