@@ -390,7 +390,6 @@ function render(allProducts) {
             data-id="${p._id}"
             data-name="${p.name}"
             data-price="${isOffer ? priceNew : priceOld}"
-            data-stock="${p.stock}"
             data-img="${mainImg}">
       ${isOutOfStock ? 'Unavailable' : 'Add to Cart'}
     </button>
