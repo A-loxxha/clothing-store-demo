@@ -182,8 +182,6 @@ router.post('/resend-verification', async (req, res) => {
 
 ///////-----forgot-password-----//////
 
-const crypto = require('crypto');
-const sendEmail = require('../utils/sendEmail'); // You may reuse nodemailer logic
 
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
