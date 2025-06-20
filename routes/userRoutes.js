@@ -87,9 +87,68 @@ router.get('/verify/:token', async (req, res) => {
     await user.save();
 
     res.send(`
-      <h2>Email Verified ✅</h2>
-      <p>You can now <a href="/login.html">log in</a>.</p>
-    `);
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Email Verified</title>
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .message-box {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+      }
+
+      h2 {
+        color: #4CAF50;
+        margin-bottom: 10px;
+      }
+
+      p {
+        color: #555;
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+
+      a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      a:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="message-box">
+      <h2>✅ Email Verified</h2>
+      <p>Your email has been successfully verified.</p>
+      <a href="/login.html">Login Now</a>
+    </div>
+  </body>
+  </html>
+`);
+
   } catch (err) {
     console.error('Verification error:', err);
     res.status(500).send('Server error during verification');
