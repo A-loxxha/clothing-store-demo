@@ -363,6 +363,11 @@
   <option value="Accessory">
 </datalist>
 
+    <label for="size">Size</label>
+    <input type="text" id="size" name="size" placeholder="e.g. S, M, L" required />
+
+    <label for="color">Color</label>
+    <input type="text" id="color" name="color" placeholder="e.g. Black, Red" required />
 
 
     <label for="stock">Stock Quantity</label>
@@ -511,6 +516,8 @@
             <td><input type="text" value="${p.name || ''}" data-field="name" /></td>
             <td><input type="number" value="${p.price?.toFixed(2) || 0}" data-field="price" step="0.01" /></td>
             <td><input type="number" value="${p.discount || 0}" data-field="discount" min="0" max="100" /></td>
+            <td><input type="text" value="${p.size || ''}" data-field="size" /></td>
+            <td><input type="text" value="${p.color || ''}" data-field="color" /></td>
             <td><input type="number" value="${p.stock || 0}" data-field="stock" /></td>
             <td><input type="text" value="${p.category || ''}" data-field="category" /></td>
             <td>

@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 router.post('/', requireAdmin, upload.fields([{ name: 'image1' }, { name: 'image2' }]), async (req, res) => {
 
   try {
-    const { name, price, discount, stock, category } = req.body;
+    const { name, price, discount, stock, category, size, color } = req.body;
     const files = req.files;
 
     if (!files || !files.image1 || files.image1.length === 0) {
@@ -56,12 +56,15 @@ router.post('/', requireAdmin, upload.fields([{ name: 'image1' }, { name: 'image
   discount,
   stock,
   category,
+  size,
+  color,
   imageUrl: image1Result.secure_url,
   hoverImageUrl: image2Result.secure_url,
   imagePublicId: image1Result.public_id,
   hoverImagePublicId: image2Result.public_id,
   isOffer: Number(discount) > 0
 });
+
 
 
     await newProduct.save();
