@@ -26,6 +26,17 @@ const sendVerificationEmail = async (to, token) => {
 `
 
   });
+
+  const sendEmail = async (to, subject, html) => {
+  await transporter.sendMail({
+    from: `"Mabel Statement" <${process.env.EMAIL_USER}>`,
+    to,
+    subject,
+    html,
+    text: html.replace(/<[^>]*>/g, '') // plain text fallback
+  });
+};
+module.exports = sendEmail;
 };
 
 module.exports = sendVerificationEmail;
