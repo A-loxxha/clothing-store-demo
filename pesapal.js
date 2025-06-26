@@ -1,28 +1,37 @@
 const axios = require('axios');
 require('dotenv').config();
 
-// ✅ This is the correct base URL
-const baseURL = "https://pay.pesapal.com";
+const baseURL = process.env.PESAPAL_BASE_URL || "https://pay.pesapal.com";
 let accessToken = '';
 
 async function authenticate() {
-  const res = await axios.post(`${baseURL}/v3/api/Auth/RequestToken`, {
-    consumer_key: process.env.PESAPAL_CONSUMER_KEY,
-    consumer_secret: process.env.PESAPAL_CONSUMER_SECRET
-  });
+  try {
+    const res = await axios.post(`${baseURL}/pesapalv3/api/Auth/RequestToken`, {
+      consumer_key: process.env.PESAPAL_CONSUMER_KEY,
+      consumer_secret: process.env.PESAPAL_CONSUMER_SECRET
+    });
 
-  accessToken = res.data.token;
-  return accessToken;
+    accessToken = res.data.token;
+    return accessToken;
+  } catch (error) {
+    console.error("🔒 PESAPAL AUTH ERROR:", error.response?.data || error.message);
+    throw new Error("Failed to authenticate with Pesapal");
+  }
 }
 
 async function initiatePayment(order) {
-  if (!accessToken) await authenticate();
+  try {
+    if (!accessToken) await authenticate();
 
-  const res = await axios.post(`${baseURL}/v3/api/Transactions/SubmitOrderRequest`, order, {
-    headers: { Authorization: `Bearer ${accessToken}` }
-  });
+    const res = await axios.post(`${baseURL}/pesapalv3/api/Transactions/SubmitOrderRequest`, order, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    console.error("💳 PESAPAL CARD ERROR:", error.response?.data || error.message);
+    throw new Error("Failed to initiate payment");
+  }
 }
 
 module.exports = { authenticate, initiatePayment };
