@@ -6,7 +6,7 @@ let accessToken = '';
 
 async function authenticate() {
   try {
-    const res = await axios.post(`${baseURL}/pesapalv3/api/Auth/RequestToken`, {
+    const res = await axios.post(`${baseURL}/api/Auth/RequestToken`, {
       consumer_key: process.env.PESAPAL_CONSUMER_KEY,
       consumer_secret: process.env.PESAPAL_CONSUMER_SECRET
     });
@@ -23,7 +23,7 @@ async function initiatePayment(order) {
   try {
     if (!accessToken) await authenticate();
 
-    const res = await axios.post(`${baseURL}/pesapalv3/api/Transactions/SubmitOrderRequest`, order, {
+    const res = await axios.post(`${baseURL}/api/Transactions/SubmitOrderRequest`, order, {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
 
