@@ -2,11 +2,11 @@ const axios = require('axios');
 require('dotenv').config();
 
 // ✅ This is the correct base URL
-const baseURL = "https://cybqa.pesapal.com";
+const baseURL = "https://pay.pesapal.com";
 let accessToken = '';
 
 async function authenticate() {
-  const res = await axios.post(`${baseURL}/pesapalv3/api/Auth/RequestToken`, {
+  const res = await axios.post(`${baseURL}/v3/api/Auth/RequestToken`, {
     consumer_key: process.env.PESAPAL_CONSUMER_KEY,
     consumer_secret: process.env.PESAPAL_CONSUMER_SECRET
   });
@@ -18,7 +18,7 @@ async function authenticate() {
 async function initiatePayment(order) {
   if (!accessToken) await authenticate();
 
-  const res = await axios.post(`${baseURL}/pesapalv3/api/Transactions/SubmitOrderRequest`, order, {
+  const res = await axios.post(`${baseURL}/v3/api/Transactions/SubmitOrderRequest`, order, {
     headers: { Authorization: `Bearer ${accessToken}` }
   });
 

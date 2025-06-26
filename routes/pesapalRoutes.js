@@ -24,7 +24,7 @@ router.post('/mpesa', async (req, res) => {
       currency: 'KES',
       amount: parseFloat(amount).toFixed(2).toString(),
       description: 'Clothing Store Order',
-      callback_url: 'https://yourdomain.com/thank-you.html',
+      callback_url: 'https://clothing-store-demo.onrender.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
       billing_address: {
         email_address: shipping.email || 'unknown@example.com',
@@ -82,7 +82,7 @@ router.post('/initiate', async (req, res) => {
       currency: 'KES',
       amount: parseFloat(amount).toFixed(2).toString(),
       description: 'Clothing Store Card Payment',
-      callback_url: 'https://yourdomain.com/thank-you.html',
+      callback_url: 'https://clothing-store-demo.onrender.com/thank-you.html',
       notification_id: process.env.PESAPAL_NOTIFICATION_ID,
       billing_address: {
         email_address: shipping.email || 'unknown@example.com',
