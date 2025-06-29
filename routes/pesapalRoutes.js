@@ -79,10 +79,13 @@ router.post('/mpesa', async (req, res) => {
 // 💳 CARD PAYMENT Route
 router.post('/initiate', async (req, res) => {
   try {
-    console.log('📨 Card Payment Request:', req.body);
-    const token = await authenticate();
-    console.log('🔐 Access token obtained');
+    console.log("🚀 [INITIATE] Incoming card payment request");
+    console.log("🛒 CART:", req.body.cart);
+    console.log("📦 SHIPPING:", req.body.shipping);
+    console.log("💰 AMOUNT:", req.body.amount);
 
+    const token = await authenticate();
+     console.log("✅ Authenticated, token:", token);
     const { amount, cart, shipping } = req.body;
 
     await validateStock(cart);
