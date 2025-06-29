@@ -4,22 +4,30 @@ const { authenticate, initiatePayment } = require('../pesapal');
 const Order = require('../models/order');
 const Product = require('../models/product');
 
-// ─────────────────────────────────────────────────────
-// 🔁 Shared helper to validate stock
+// ─────────────────────────────────────────────
+// 🔁 Helper to validate product stock
 async function validateStock(cart) {
+  console.log('🔍 Validating stock for cart:', cart);
   for (const item of cart) {
     const product = await Product.findById(item.id);
-    if (!product || product.stock < item.quantity) {
+    if (!product) {
+      throw new Error(`Product with ID ${item.id} not found`);
+    }
+    if (product.stock < item.quantity) {
       throw new Error(`Not enough stock for ${item.name}`);
     }
   }
+  console.log('✅ Stock validation passed');
 }
 
-// ─────────────────────────────────────────────────────
-// 💵 M-PESA Payment Route
+// ─────────────────────────────────────────────
+// 💵 M-PESA Route
 router.post('/mpesa', async (req, res) => {
   try {
+    console.log('📨 M-PESA Payment Request:', req.body);
     const token = await authenticate();
+    console.log('🔐 Access token obtained');
+
     const { phone, amount, cart, shipping } = req.body;
 
     await validateStock(cart);
@@ -41,9 +49,10 @@ router.post('/mpesa', async (req, res) => {
       }
     };
 
+    console.log('📦 Initiating M-Pesa order with Pesapal:', order);
     const response = await initiatePayment(order);
+    console.log('✅ Pesapal responded:', response);
 
-    // Save order
     const newOrder = new Order({
       cart,
       shipping,
@@ -52,24 +61,28 @@ router.post('/mpesa', async (req, res) => {
       totalAmount: parseFloat(amount)
     });
     await newOrder.save();
+    console.log('💾 Order saved to DB');
 
-    // Reduce stock
     for (const item of cart) {
       await Product.findByIdAndUpdate(item.id, { $inc: { stock: -item.quantity } });
     }
+    console.log('📉 Stock levels updated');
 
     res.json({ success: true, ...response });
   } catch (err) {
-    console.error('🔁 PESAPAL M-PESA ERROR:', err.response?.data || err.message);
+    console.error('❌ PESAPAL M-PESA ERROR:', err.response?.data || err.message);
     res.status(500).json({ success: false, message: 'Failed to initiate M-Pesa payment' });
   }
 });
 
-// ─────────────────────────────────────────────────────
-// 💳 Card Payment Route
+// ─────────────────────────────────────────────
+// 💳 CARD PAYMENT Route
 router.post('/initiate', async (req, res) => {
   try {
-    const token = await authenticate(); // ensures accessToken is fresh
+    console.log('📨 Card Payment Request:', req.body);
+    const token = await authenticate();
+    console.log('🔐 Access token obtained');
+
     const { amount, cart, shipping } = req.body;
 
     await validateStock(cart);
@@ -91,9 +104,10 @@ router.post('/initiate', async (req, res) => {
       }
     };
 
+    console.log('📦 Initiating Card order with Pesapal:', order);
     const response = await initiatePayment(order);
+    console.log('✅ Pesapal responded:', response);
 
-    // Save order
     const newOrder = new Order({
       cart,
       shipping,
@@ -102,11 +116,12 @@ router.post('/initiate', async (req, res) => {
       totalAmount: parseFloat(amount)
     });
     await newOrder.save();
+    console.log('💾 Order saved to DB');
 
-    // Reduce stock
     for (const item of cart) {
       await Product.findByIdAndUpdate(item.id, { $inc: { stock: -item.quantity } });
     }
+    console.log('📉 Stock levels updated');
 
     res.json({ success: true, redirect_url: response.redirect_url });
   } catch (err) {
