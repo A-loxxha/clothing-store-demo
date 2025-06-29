@@ -10,7 +10,6 @@ async function authenticate() {
       consumer_key: process.env.PESAPAL_CONSUMER_KEY,
       consumer_secret: process.env.PESAPAL_CONSUMER_SECRET
     });
-
     accessToken = res.data.token;
     return accessToken;
   } catch (error) {
@@ -19,12 +18,19 @@ async function authenticate() {
   }
 }
 
+async function getToken() {
+  if (!accessToken) {
+    await authenticate();
+  }
+  return accessToken;
+}
+
 async function initiatePayment(order) {
   try {
-    await getToken();
+    const token = await getToken();
 
     const res = await axios.post(`${baseURL}/v3/api/Transactions/SubmitOrderRequest`, order, {
-      headers: { Authorization: `Bearer ${accessToken}` }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     return res.data;
