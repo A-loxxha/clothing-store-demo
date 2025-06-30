@@ -37,7 +37,7 @@ async function authenticate() {
 
     logAxiosResponse('AUTH', res);
     accessToken = res.data.token;
-    console.log('🔑 Access Token received:', accessToken);
+  
     return accessToken;
   } catch (error) {
     logAxiosError('AUTH', error);
@@ -49,7 +49,7 @@ async function authenticate() {
 async function initiatePayment(order) {
   try {
     if (!accessToken) {
-      console.log('ℹ️ No token available, calling authenticate()');
+    
       await authenticate();
     }
 

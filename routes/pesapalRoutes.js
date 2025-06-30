@@ -24,9 +24,9 @@ async function validateStock(cart) {
 // 💵 M-PESA Route
 router.post('/mpesa', async (req, res) => {
   try {
-    console.log('📨 M-PESA Payment Request:', req.body);
+  
     const token = await authenticate();
-    console.log('🔐 Access token obtained');
+  
 
     const { phone, amount, cart, shipping } = req.body;
 
