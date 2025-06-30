@@ -30,7 +30,7 @@ function logAxiosError(label, error) {
 async function authenticate() {
   console.log('🔐 Authenticating with Pesapal...');
   try {
-    const res = await axios.post(`${baseURL}/api/Auth/RequestToken`, {
+    const res = await axios.post(`${baseURL}/v3/api/Auth/RequestToken`, {
       consumer_key: process.env.PESAPAL_CONSUMER_KEY,
       consumer_secret: process.env.PESAPAL_CONSUMER_SECRET
     });
@@ -55,7 +55,7 @@ async function initiatePayment(order) {
 
     console.log('📤 Sending payment order to Pesapal:', order);
 
-    const res = await axios.post(`${baseURL}/api/Transactions/SubmitOrderRequest`, order, {
+    const res = await axios.post(`${baseURL}/v3/api/Transactions/SubmitOrderRequest`, order, {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
 
