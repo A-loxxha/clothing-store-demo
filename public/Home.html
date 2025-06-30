@@ -383,7 +383,7 @@ function render(allProducts) {
     ${isOffer
       ? `<p><span style="text-decoration:line-through;color:#888;">KES ${priceOld.toLocaleString()}</span><br><strong style="color:#ce8e1a;">KES ${priceNew}</strong></p>`
       : `<p>KES ${priceOld.toLocaleString()}</p>`}
-    <small>In stock: ${p.stock}</small>
+  
     <button class="add-to-cart-btn"
             ${isOutOfStock ? 'disabled' : ''}
             style="${isOutOfStock ? 'background:#aaa;cursor:not-allowed;' : ''}"
