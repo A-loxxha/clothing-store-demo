@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { requireLogin, requireAdmin } = require('../middleware/auth');
 const crypto = require('crypto');
-const sendVerificationEmail = require('../utils/sendEmail');
-const sendEmail = require('../utils/sendEmail');
+const { sendVerificationEmail, sendEmail } = require('../utils/sendEmail');
+
 
 
 const router = express.Router();
