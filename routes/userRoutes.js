@@ -144,7 +144,7 @@ router.get('/verify/:token', async (req, res) => {
   <body>
     <div class="message-box">
       <h2>✅ Email Verified</h2>
-      <p>Your email has been successfully verified.</p>
+      <p>Your email has been successfully verified. Click the button below to continue logging in</p>
       <a href="https://clothing-store-demo.onrender.com/login.html">Login Now</a>
     </div>
   </body>
